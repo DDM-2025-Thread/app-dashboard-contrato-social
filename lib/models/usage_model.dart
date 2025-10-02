@@ -1,5 +1,3 @@
-import 'package:dashboard_application/models/user_model.dart';
-
 class UsageModel {
   final String id;
   final String userId;
