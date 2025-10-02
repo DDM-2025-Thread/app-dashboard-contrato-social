@@ -1,3 +1,4 @@
+import 'package:dashboard_application/core/routes/routes.dart';
 import 'package:dashboard_application/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:dashboard_application/widgets/cpf_field.dart';
@@ -59,6 +60,13 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, Routes.register);
+        },
+        tooltip: 'Registrar',
+        child: const Icon(Icons.person_add),
       ),
     );
   }
