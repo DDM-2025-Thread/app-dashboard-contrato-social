@@ -1,3 +1,4 @@
+import 'package:dashboard_application/widgets/custom_button.dart';
 import 'package:dashboard_application/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
 import '../widgets/cpf_field.dart';
@@ -59,7 +60,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
-                        color: Colors.blue.shade700,
+                        color: Colors.white,
                       ),
                     ),
                     SizedBox(height: 30),
@@ -78,23 +79,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       validator: _validateConfirmPassword,
                     ),
                     SizedBox(height: 30),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: _register,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green.shade600,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: Text(
-                          AppConstants.registerButton,
-                          style: TextStyle(fontSize: 18),
-                        ),
-                      ),
-                    ),
+                    CustomButton(text: AppConstants.registerButton, onPressed: _register),
                   ],
                 ),
               ),
