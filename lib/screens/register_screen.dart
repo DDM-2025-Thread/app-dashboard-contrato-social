@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../widgets/cpf_field.dart';
 import '../widgets/password_field.dart';
-import '../utils/validators.dart';
-import '../utils/constants.dart';
+import '../utils/validator.dart';
+import '../utils/constant.dart';
 
 class RegisterScreen extends StatefulWidget {
   @override

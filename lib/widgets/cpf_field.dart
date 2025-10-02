@@ -1,6 +1,7 @@
+import 'package:dashboard_application/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
-import '../utils/masks.dart';
-import '../utils/validators.dart';
+import '../utils/mask.dart';
+import '../utils/validator.dart';
 
 class CpfField extends StatelessWidget {
   final TextEditingController controller;

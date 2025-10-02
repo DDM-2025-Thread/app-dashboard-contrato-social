@@ -1,4 +1,4 @@
-import 'package:mask_text_input_formatter/mask_text_input_formatter';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class Masks {
   static MaskTextInputFormatter cpfMask = MaskTextInputFormatter(
