@@ -3,8 +3,8 @@ import 'package:dashboard_application/utils/constant.dart';
 import 'package:dashboard_application/utils/validator.dart';
 import 'package:dashboard_application/widgets/custom_button.dart';
 import 'package:dashboard_application/widgets/custom_scaffold.dart';
+import 'package:dashboard_application/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
-import 'package:dashboard_application/widgets/cpf_field.dart';
 import 'package:dashboard_application/widgets/password_field.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -21,7 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _login() {
     if (_formKey.currentState!.validate()) {
-      _showSnackBar('Login realizado com sucesso!');
+      _showSnackBar(AppConstants.loginSuccess);
     }
   }
 
@@ -50,14 +50,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      "Login",
+                      AppConstants.loginTitle,
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     SizedBox(height: 20),
-                    CpfField(controller: _cpfController),
+                    CustomTextField(controller: _cpfController, labelText: AppConstants.emailHint, validator: Validators.validateEmail),
                     SizedBox(height: 20),
                     PasswordField(
                       controller: _passwordController,
@@ -69,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         Expanded(
                           child: CustomButton(
-                            text: "Registrar",
+                            text: AppConstants.registerButton,
                             onPressed: () {
                               Navigator.pushNamed(context, Routes.register);
                             },
@@ -81,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         SizedBox(width: 10),
                         Expanded(
                           child: CustomButton(
-                            text: "Entrar",
+                            text: AppConstants.loginButton,
                             onPressed: _login,
                             width: double.infinity, 
                           ),
