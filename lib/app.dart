@@ -3,7 +3,6 @@ import 'package:dashboard_application/screens/dashboard_screen.dart';
 import 'package:dashboard_application/screens/login_screen.dart';
 import 'package:dashboard_application/screens/register_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:dashboard_application/screens/home_screen.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -18,8 +17,7 @@ class App extends StatelessWidget {
       routes: {
         Routes.login: (context) => const LoginScreen(),
         Routes.register: (context) => const RegisterScreen(),
-        Routes.home: (context) => const HomeScreen(),
-        Routes.dashboard: (context) => const DashboardScreen(),
+        Routes.home: (context) => const DashboardScreen(),
       },
     );
     }

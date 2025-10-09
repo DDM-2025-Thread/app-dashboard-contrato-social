@@ -22,6 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void _login() {
     if (_formKey.currentState!.validate()) {
       _showSnackBar(AppConstants.loginSuccess);
+      Navigator.pushNamed(context, Routes.home);
     }
   }
 
