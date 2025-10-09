@@ -132,8 +132,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
     );
   }
-
-  Widget _buildHeader(BuildContext context, bool isDark) {
+Widget _buildHeader(BuildContext context, bool isDark) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
@@ -208,96 +207,3 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildChartSection(BuildContext context, bool isDark) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.grey[900] : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Visitors Overview - November',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Colors.grey[800],
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Total visitors for the selected period',
-            style: TextStyle(
-              color: isDark ? Colors.grey[400] : Colors.grey[600],
-              fontSize: 14,
-            ),
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            height: 200,
-            child: LineChartWidget(
-              data: [12000, 18000, 14000, 22000, 19000, 25000, 28000],
-              labels: ['1', '5', '10', '15', '20', '25', '30'],
-              color: Colors.purple,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showPeriodFilter() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        
-        return Container(
-          decoration: BoxDecoration(
-            color: isDark ? Colors.grey[900] : Colors.white,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Text(
-                  'Select Period',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              ...['Últimos 7 dias', 'Últimos 30 dias', 'Últimos 90 dias', 'Este ano']
-                  .map((period) => ListTile(
-                title: Text(period),
-                trailing: _selectedPeriod == period
-                    ? Icon(Icons.check, color: Colors.purple.shade400)
-                    : null,
-                onTap: () {
-                  setState(() => _selectedPeriod = period);
-                  Navigator.pop(context);
-                },
-              )),
-              const SizedBox(height: 16),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
