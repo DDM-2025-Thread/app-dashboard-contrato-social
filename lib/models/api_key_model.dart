@@ -1,32 +1,15 @@
-enum ApiKeyStatus { ativa, revogada, expirada }
-
-ApiKeyStatus apiKeyStatusFromString(String status) {
-  switch (status.toLowerCase()) {
-    case 'ativa':
-      return ApiKeyStatus.ativa;
-    case 'revogada':
-      return ApiKeyStatus.revogada;
-    case 'expirada':
-      return ApiKeyStatus.expirada;
-    default:
-      return ApiKeyStatus.revogada;
-  }
-}
-
-String apiKeyStatusToString(ApiKeyStatus status) {
-  return status.name; // ativa, revogada, expirada
-}
+import 'package:dashboard_application/models/user_model.dart';
 
 class ApiKeyModel {
   final String id;
-  final String userId;
+  final User user;
   final String key;
-  final ApiKeyStatus status;
+  final String status;
   final DateTime createdAt;
 
   ApiKeyModel({
     required this.id,
-    required this.userId,
+    required this.user,
     required this.key,
     required this.status,
     required this.createdAt,
@@ -34,17 +17,17 @@ class ApiKeyModel {
 
   factory ApiKeyModel.fromJson(Map<String, dynamic> json) => ApiKeyModel(
     id: json['id'],
-    userId: json['userId'],
+    user: User.fromMap(json['user']),
     key: json['key'],
-    status: apiKeyStatusFromString(json['status']),
+    status: json['status'],
     createdAt: DateTime.parse(json['createdAt']),
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
-    "userId": userId,
+    "user": user.toMap(),
     "key": key,
-    "status": apiKeyStatusToString(status),
+    "status": status,
     "createdAt": createdAt.toIso8601String(),
   };
 }

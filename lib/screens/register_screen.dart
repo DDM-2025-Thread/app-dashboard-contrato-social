@@ -1,6 +1,8 @@
+import 'package:dashboard_application/core/routes/routes.dart';
+import 'package:dashboard_application/widgets/custom_button.dart';
 import 'package:dashboard_application/widgets/custom_scaffold.dart';
+import 'package:dashboard_application/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
-import '../widgets/cpf_field.dart';
 import '../widgets/password_field.dart';
 import '../utils/validator.dart';
 import '../utils/constant.dart';
@@ -58,12 +60,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       AppConstants.registerTitle,
                       style: TextStyle(
                         fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue.shade700,
+                        fontWeight: FontWeight.bold
                       ),
                     ),
                     SizedBox(height: 30),
-                    CpfField(controller: _cpfController),
+                    CustomTextField(controller: _cpfController, labelText: AppConstants.emailHint, validator: Validators.validateEmail),
                     SizedBox(height: 20),
                     PasswordField(
                       controller: _passwordController,
@@ -78,22 +79,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       validator: _validateConfirmPassword,
                     ),
                     SizedBox(height: 30),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: _register,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green.shade600,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomButton(
+                            text: AppConstants.loginButton,
+                            onPressed: () {
+                              Navigator.pushNamed(context, Routes.login);
+                            },
+                            width: double.infinity,
+                            backgroundColor: Colors.grey[300],
+                            textColor: Colors.black,
                           ),
                         ),
-                        child: Text(
-                          AppConstants.registerButton,
-                          style: TextStyle(fontSize: 18),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: CustomButton(
+                            text: AppConstants.registerButton,
+                            onPressed: _register,
+                            width: double.infinity, 
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   ],
                 ),

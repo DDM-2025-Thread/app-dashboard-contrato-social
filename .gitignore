@@ -33,6 +33,11 @@ migrate_working_dir/
 .pub/
 /build/
 
+# Generated plugin files
+/linux/flutter/
+/macos/Flutter/ephemeral/
+/windows/flutter/
+
 # Symbolication related
 app.*.symbols
 
@@ -43,3 +48,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+/linux/flutter/generated_plugin_registrant.cc
+/macos/flutter/generated_plugin_registrant.*
+pubspec.lock

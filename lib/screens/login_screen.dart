@@ -1,7 +1,10 @@
 import 'package:dashboard_application/core/routes/routes.dart';
+import 'package:dashboard_application/utils/constant.dart';
+import 'package:dashboard_application/utils/validator.dart';
+import 'package:dashboard_application/widgets/custom_button.dart';
 import 'package:dashboard_application/widgets/custom_scaffold.dart';
+import 'package:dashboard_application/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
-import 'package:dashboard_application/widgets/cpf_field.dart';
 import 'package:dashboard_application/widgets/password_field.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -18,7 +21,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _login() {
     if (_formKey.currentState!.validate()) {
-      _showSnackBar('Login realizado com sucesso!');
+      _showSnackBar(AppConstants.loginSuccess);
+      Navigator.pushNamed(context, Routes.home);
     }
   }
 
@@ -33,40 +37,64 @@ class _LoginScreenState extends State<LoginScreen> {
     return CustomScaffold(
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                CpfField(controller: _cpfController),
-                const SizedBox(height: 16.0),
-                PasswordField(
-                  controller: _passwordController,
-                  labelText: 'Senha',
-                  helperText: 'A senha deve ter exatamente 8 caracteres.',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor, insira sua senha.';
-                    } else if (value.length != 8) {
-                      return 'A senha deve ter exatamente 8 caracteres.';
-                    }
-                    return null;
-                  },
+          padding: EdgeInsets.all(20),
+          child: Card(
+            elevation: 8,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(30),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      AppConstants.loginTitle,
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    CustomTextField(controller: _cpfController, labelText: AppConstants.emailHint, validator: Validators.validateEmail),
+                    SizedBox(height: 20),
+                    PasswordField(
+                      controller: _passwordController,
+                      labelText: AppConstants.passwordHint,
+                      validator: Validators.validatePassword,
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomButton(
+                            text: AppConstants.registerButton,
+                            onPressed: () {
+                              Navigator.pushNamed(context, Routes.register);
+                            },
+                            width: double.infinity,
+                            backgroundColor: Colors.grey[300],
+                            textColor: Colors.black,
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: CustomButton(
+                            text: AppConstants.loginButton,
+                            onPressed: _login,
+                            width: double.infinity, 
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 24.0),
-                ElevatedButton(onPressed: _login, child: const Text('Entrar')),
-              ],
+              ),
             ),
           ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, Routes.register);
-        },
-        tooltip: 'Registrar',
-        child: const Icon(Icons.person_add),
       ),
     );
   }

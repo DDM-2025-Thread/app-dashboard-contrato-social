@@ -19,10 +19,11 @@ class CustomScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
-        backgroundColor: Colors.blue.shade700,
+        title: Text(title, style: TextStyle(color: Colors.white),),
+        backgroundColor: Colors.black,
         centerTitle: true,
-        bottom: bottom,   
+        bottom: bottom, 
+        iconTheme: IconThemeData(color: Colors.white),  
       ),
       body: body,
       floatingActionButton: floatingActionButton,

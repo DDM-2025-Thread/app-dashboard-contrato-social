@@ -2,7 +2,9 @@ class AppConstants {
   static const String appName = 'Sistema de Login';
   static const String loginTitle = 'Login';
   static const String registerTitle = 'Cadastro';
-  static const String cpfHint = 'Digite seu CPF';
+  static const String homeTitle = 'Dashboard';
+  static const String homeSubtitle = 'Acompanhe suas métricas';
+  static const String emailHint = 'Digite seu e-mail';
   static const String passwordHint = 'Digite sua senha';
   static const String confirmPasswordHint = 'Confirme sua senha';
   static const String loginButton = 'Entrar';
@@ -13,7 +15,7 @@ class AppConstants {
   
   // Mensagens de erro
   static const String emptyFields = 'Por favor, preencha todos os campos';
-  static const String invalidCpf = 'CPF inválido';
+  static const String invalidEmail = 'E-mail inválido';
   static const String invalidPassword = 'Senha deve ter até 8 dígitos, conter pelo menos um número e um caractere especial';
   static const String passwordMismatch = 'As senhas não coincidem';
   static const String loginSuccess = 'Login realizado com sucesso!';
