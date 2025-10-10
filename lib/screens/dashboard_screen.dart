@@ -1,3 +1,6 @@
+import 'package:dashboard_application/core/mocks/usage_log_mock.dart';
+import 'package:dashboard_application/models/usage_log_model.dart';
+import 'package:dashboard_application/utils/constant.dart';
 import 'package:flutter/material.dart';
 import '../widgets/custom_scaffold.dart';
 import '../widgets/metric_card.dart';
@@ -15,63 +18,48 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   int _currentIndex = 0;
   String _selectedPeriod = 'Últimos 30 dias';
+  DateTime _selectedDate = DateTime.now().subtract(const Duration(days: 30));
+  final today = DateTime.now();
+  List<UsageModel> usageLogs = getUsageLogMock();
 
-  final List<Map<String, dynamic>> _metrics = [
-    {
-      'title': 'Revenue',
-      'value': '\$59,782',
-      'change': '+34%',
-      'isPositive': true,
-      'icon': Icons.attach_money,
-      'color': Colors.green,
-    },
-    {
-      'title': 'Page visitors',
-      'value': '175K',
-      'change': '+80%',
-      'isPositive': true,
-      'icon': Icons.people,
-      'color': Colors.blue,
-    },
-    {
-      'title': 'Pageviews',
-      'value': '346K',
-      'change': '+56%',
-      'isPositive': true,
-      'icon': Icons.visibility,
-      'color': Colors.purple,
-    },
-    {
-      'title': 'Bounce rate',
-      'value': '64%',
-      'change': '−80%',
-      'isPositive': false,
-      'icon': Icons.trending_down,
-      'color': Colors.orange,
-    },
-    {
-      'title': 'Visit duration',
-      'value': '1m 8s',
-      'change': '+9%',
-      'isPositive': true,
-      'icon': Icons.timer,
-      'color': Colors.teal,
-    },
-  ];
+  late List<Map<String, dynamic>> _metrics;
+
+  @override
+  void initState() {
+    super.initState();
+    _metrics = [
+      {
+        'title': 'Total Uso Diario',
+        'value': _getDailyUsage(),
+        'change': '',
+        'isPositive': true,
+        'icon': Icons.swap_horiz,
+        'color': Colors.purple.shade500,
+      },
+      {
+        'title': 'Total Gasto',
+        'value': 'R\$${_getTotalCost()}',
+        'change': '',
+        'isPositive': true,
+        'icon': Icons.money,
+        'color': Colors.green,
+      },
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return CustomScaffold(
-      title: 'Dashboard',
+      title: AppConstants.homeTitle,
       hasDrawer: false,
       body: SafeArea(
         child: Column(
           children: [
-            // Header
-            _buildHeader(context, isDark),
-            
+            _buildHeader(context, theme, colorScheme),
+
             // Metrics Section
             Expanded(
               child: SingleChildScrollView(
@@ -83,24 +71,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16),
                       child: Text(
-                        'Page analytics',
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        AppConstants.homeSubtitle,
+                        style: theme.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : Colors.grey[800],
+                          color: colorScheme.onBackground,
                         ),
                       ),
                     ),
-                    
+
                     // Metrics Grid
                     GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 12,
-                        childAspectRatio: 1.2,
-                      ),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 12,
+                            childAspectRatio: 1.2,
+                          ),
                       itemCount: _metrics.length,
                       itemBuilder: (context, index) => MetricCard(
                         title: _metrics[index]['title'],
@@ -111,11 +100,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         color: _metrics[index]['color'],
                       ),
                     ),
-                    
+
                     const SizedBox(height: 24),
-                    
+
                     // Chart Section
-                    _buildChartSection(context, isDark),
+                    _buildChartSection(context, theme, colorScheme),
                   ],
                 ),
               ),
@@ -132,14 +121,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
     );
   }
-Widget _buildHeader(BuildContext context, bool isDark) {
+
+  Widget _buildHeader(
+    BuildContext context,
+    ThemeData theme,
+    ColorScheme colorScheme,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: isDark ? Colors.grey[900] : Colors.white,
+        color: colorScheme.surface,
         border: Border(
           bottom: BorderSide(
-            color: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+            color:
+                colorScheme.outline ?? colorScheme.onSurface.withOpacity(0.2),
           ),
         ),
       ),
@@ -150,7 +145,9 @@ Widget _buildHeader(BuildContext context, bool isDark) {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                color:
+                    colorScheme.outline ??
+                    colorScheme.onSurface.withOpacity(0.2),
               ),
             ),
             child: Material(
@@ -159,20 +156,23 @@ Widget _buildHeader(BuildContext context, bool isDark) {
                 borderRadius: BorderRadius.circular(20),
                 onTap: _showPeriodFilter,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   child: Row(
                     children: [
                       Icon(
                         Icons.filter_list,
                         size: 16,
-                        color: isDark ? Colors.grey[400] : Colors.grey[600],
+                        color: colorScheme.onSurface.withOpacity(0.7),
                       ),
                       const SizedBox(width: 8),
                       Text(
                         _selectedPeriod,
                         style: TextStyle(
                           fontSize: 14,
-                          color: isDark ? Colors.grey[400] : Colors.grey[600],
+                          color: colorScheme.onSurface.withOpacity(0.7),
                         ),
                       ),
                     ],
@@ -181,41 +181,44 @@ Widget _buildHeader(BuildContext context, bool isDark) {
               ),
             ),
           ),
-          
+
           const Spacer(),
-          
+
           // User Avatar
           Container(
             width: 40,
             height: 40,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.purple.shade400,
+              color: colorScheme.primary,
               border: Border.all(
-                color: isDark ? Colors.grey[600]! : Colors.grey[300]!,
+                color:
+                    colorScheme.outline ??
+                    colorScheme.onSurface.withOpacity(0.2),
                 width: 2,
               ),
             ),
-            child: const Icon(
-              Icons.person,
-              color: Colors.white,
-              size: 20,
-            ),
+            child: const Icon(Icons.person, color: Colors.white, size: 20),
           ),
         ],
       ),
     );
   }
-Widget _buildChartSection(BuildContext context, bool isDark) {
+
+  Widget _buildChartSection(
+    BuildContext context,
+    ThemeData theme,
+    ColorScheme colorScheme,
+  ) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? Colors.grey[900] : Colors.white,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: colorScheme.shadow.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -228,14 +231,14 @@ Widget _buildChartSection(BuildContext context, bool isDark) {
             'Visitors Overview - November',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Colors.grey[800],
+              color: colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             'Total visitors for the selected period',
             style: TextStyle(
-              color: isDark ? Colors.grey[400] : Colors.grey[600],
+              color: colorScheme.onSurface.withOpacity(0.7),
               fontSize: 14,
             ),
           ),
@@ -245,7 +248,7 @@ Widget _buildChartSection(BuildContext context, bool isDark) {
             child: LineChartWidget(
               data: [12000, 18000, 14000, 22000, 19000, 25000, 28000],
               labels: ['1', '5', '10', '15', '20', '25', '30'],
-              color: Colors.purple,
+              color: colorScheme.primary,
             ),
           ),
         ],
@@ -253,16 +256,38 @@ Widget _buildChartSection(BuildContext context, bool isDark) {
     );
   }
 
+  String _getDailyUsage() {
+    final dailyUsage = usageLogs
+        .where(
+          (log) =>
+              log.timestamp.year == today.year &&
+              log.timestamp.month == today.month &&
+              log.timestamp.day == today.day,
+        )
+        .length;
+    return dailyUsage.toString();
+  }
+
+  String _getTotalCost() {
+    final totalCost = usageLogs
+        .where(
+          (log) => log.timestamp.isAfter(_selectedDate),
+        )
+        .fold<double>(0.0, (sum, log) => sum + log.cost);
+    return totalCost.toString();
+  }
+
   void _showPeriodFilter() {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        
+        final theme = Theme.of(context);
+        final colorScheme = theme.colorScheme;
+
         return Container(
           decoration: BoxDecoration(
-            color: isDark ? Colors.grey[900] : Colors.white,
+            color: colorScheme.surface,
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(20),
               topRight: Radius.circular(20),
@@ -275,22 +300,32 @@ Widget _buildChartSection(BuildContext context, bool isDark) {
                 padding: const EdgeInsets.all(16),
                 child: Text(
                   'Select Period',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
                   ),
                 ),
               ),
-              ...['Últimos 7 dias', 'Últimos 30 dias', 'Últimos 90 dias', 'Este ano']
-                  .map((period) => ListTile(
-                title: Text(period),
-                trailing: _selectedPeriod == period
-                    ? Icon(Icons.check, color: Colors.purple.shade400)
-                    : null,
-                onTap: () {
-                  setState(() => _selectedPeriod = period);
-                  Navigator.pop(context);
-                },
-              )),
+              ...[
+                'Últimos 7 dias',
+                'Últimos 30 dias',
+                'Últimos 90 dias',
+                'Este ano',
+              ].map(
+                (period) => ListTile(
+                  title: Text(
+                    period,
+                    style: TextStyle(color: colorScheme.onSurface),
+                  ),
+                  trailing: _selectedPeriod == period
+                      ? Icon(Icons.check, color: colorScheme.primary)
+                      : null,
+                  onTap: () {
+                    setState(() => _selectedPeriod = period);
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
               const SizedBox(height: 16),
             ],
           ),

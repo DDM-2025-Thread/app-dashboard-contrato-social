@@ -2,6 +2,8 @@ class AppConstants {
   static const String appName = 'Sistema de Login';
   static const String loginTitle = 'Login';
   static const String registerTitle = 'Cadastro';
+  static const String homeTitle = 'Dashboard';
+  static const String homeSubtitle = 'Acompanhe suas métricas';
   static const String emailHint = 'Digite seu e-mail';
   static const String passwordHint = 'Digite sua senha';
   static const String confirmPasswordHint = 'Confirme sua senha';
