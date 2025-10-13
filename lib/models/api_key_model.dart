@@ -1,15 +1,13 @@
-import 'package:dashboard_application/models/user_model.dart';
-
 class ApiKeyModel {
   final String id;
-  final User user;
+  final String userID;
   final String key;
   final String status;
   final DateTime createdAt;
 
   ApiKeyModel({
     required this.id,
-    required this.user,
+    required this.userID,
     required this.key,
     required this.status,
     required this.createdAt,
@@ -17,7 +15,7 @@ class ApiKeyModel {
 
   factory ApiKeyModel.fromJson(Map<String, dynamic> json) => ApiKeyModel(
     id: json['id'],
-    user: User.fromMap(json['user']),
+    userID: json['userID'],
     key: json['key'],
     status: json['status'],
     createdAt: DateTime.parse(json['createdAt']),
@@ -25,7 +23,7 @@ class ApiKeyModel {
 
   Map<String, dynamic> toJson() => {
     "id": id,
-    "user": user.toMap(),
+    "userID": userID,
     "key": key,
     "status": status,
     "createdAt": createdAt.toIso8601String(),

@@ -1,8 +1,6 @@
-import 'package:dashboard_application/models/user_model.dart';
-
 class BillingModel {
   final int id;
-  final User user;
+  final String userID;
   final String period;
   final int total_requests;
   final double total_cost;
@@ -10,17 +8,17 @@ class BillingModel {
 
   BillingModel({
     required this.id,
-    required this.user,
+    required this.userID,
     required this.period,
     required this.total_requests,
     required this.total_cost,
     required this.status,
   });
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'user': user.toMap(),
+      'userID': userID,
       'period': period,
       'total_requests': total_requests,
       'total_cost': total_cost,
@@ -28,14 +26,14 @@ class BillingModel {
     };
   }
 
-  factory BillingModel.fromMap(Map<String, dynamic> map) {
+  factory BillingModel.fromJson(Map<String, dynamic> json) {
     return BillingModel(
-      id: map['id'],
-      user: User.fromMap(map['user']),
-      period: map['period'],
-      total_requests: map['total_requests'],
-      total_cost: map['total_cost'],
-      status: map['status'],
+      id: json['id'],
+      userID: json['userID'],
+      period: json['period'],
+      total_requests: json['total_requests'],
+      total_cost: json['total_cost'],
+      status: json['status'],
     );
   }
 

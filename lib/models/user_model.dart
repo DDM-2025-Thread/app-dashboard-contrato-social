@@ -9,7 +9,7 @@ class User {
     required this.name,
   });
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return {
       'id': id,
       'email': email,
@@ -17,11 +17,11 @@ class User {
     };
   }
 
-  factory User.fromMap(Map<String, dynamic> map) {
+  factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: map['id'],
-      email: map['email'],
-      name: map['name'],
+      id: json['id'],
+      email: json['email'],
+      name: json['name'],
     );
   }
 }
