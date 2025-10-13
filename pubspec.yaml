@@ -37,6 +37,8 @@ dependencies:
   mask_text_input_formatter: ^2.9.0
   fl_chart: 1.1.0
   flutter_svg: ^2.2.1
+  http: ^1.1.0
+  flutter_dotenv: ^6.0.0
 
 dev_dependencies:
   flutter_test:
@@ -54,6 +56,8 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  assets:
+    - .env
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
