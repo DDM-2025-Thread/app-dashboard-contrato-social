@@ -1,45 +1,8 @@
 class Validators {
-  static String? validateCPF(String? cpf) {
-    if (cpf == null || cpf.isEmpty) {
-      return 'CPF é obrigatório';
+  static String? validateName(String? name) {
+    if (name == null || name.isEmpty) {
+      return 'Nome é obrigatório';
     }
-
-    // Remove caracteres não numéricos
-    String cleanedCpf = cpf.replaceAll(RegExp(r'[^0-9]'), '');
-
-    if (cleanedCpf.length != 11) {
-      return 'CPF deve ter 11 dígitos';
-    }
-
-    // Verifica se todos os dígitos são iguais
-    if (RegExp(r'^(\d)\1+$').hasMatch(cleanedCpf)) {
-      return 'CPF inválido';
-    }
-
-    // Validação do primeiro dígito verificador
-    int sum = 0;
-    for (int i = 0; i < 9; i++) {
-      sum += int.parse(cleanedCpf[i]) * (10 - i);
-    }
-    int firstDigit = (sum * 10) % 11;
-    if (firstDigit == 10) firstDigit = 0;
-
-    if (firstDigit != int.parse(cleanedCpf[9])) {
-      return 'CPF inválido';
-    }
-
-    
-    sum = 0;
-    for (int i = 0; i < 10; i++) {
-      sum += int.parse(cleanedCpf[i]) * (11 - i);
-    }
-    int secondDigit = (sum * 10) % 11;
-    if (secondDigit == 10) secondDigit = 0;
-
-    if (secondDigit != int.parse(cleanedCpf[10])) {
-      return 'CPF inválido';
-    }
-
     return null;
   }
 

@@ -5,14 +5,16 @@ class PasswordField extends StatefulWidget {
   final TextEditingController controller;
   final String labelText;
   final String? helperText;
+  final bool? enabled;
   final String? Function(String?)? validator;
   final void Function(String)? onChanged;
 
   const PasswordField({
     Key? key,
     required this.controller,
-    required this.labelText,
+    required this.labelText,    
     this.helperText,
+    this.enabled,
     this.validator,
     this.onChanged,
   }) : super(key: key);
@@ -45,6 +47,7 @@ class _PasswordFieldState extends State<PasswordField> {
       validator: widget.validator,
       maxLength: 8,
       onChanged: widget.onChanged,
+      enabled: widget.enabled,
     );
   }
 }

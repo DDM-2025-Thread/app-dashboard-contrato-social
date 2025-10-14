@@ -4,6 +4,7 @@ class AppConstants {
   static const String registerTitle = 'Cadastro';
   static const String homeTitle = 'Dashboard';
   static const String homeSubtitle = 'Acompanhe suas métricas';
+  static const String nameHint = 'Digite seu nome';
   static const String emailHint = 'Digite seu e-mail';
   static const String passwordHint = 'Digite sua senha';
   static const String confirmPasswordHint = 'Confirme sua senha';

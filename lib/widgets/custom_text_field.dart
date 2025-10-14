@@ -11,6 +11,7 @@ class CustomTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final List<dynamic>? inputFormatters;
   final int? maxLength;
+  final bool? enabled;
   final void Function(String)? onChanged;
 
   const CustomTextField({
@@ -25,6 +26,7 @@ class CustomTextField extends StatelessWidget {
     this.keyboardType,
     this.inputFormatters,
     this.maxLength,
+    this.enabled,
     this.onChanged,
   }) : super(key: key);
 
@@ -38,6 +40,7 @@ class CustomTextField extends StatelessWidget {
       inputFormatters: inputFormatters != null ? List.from(inputFormatters!) : null,
       maxLength: maxLength,
       onChanged: onChanged,
+      enabled: enabled,
       decoration: InputDecoration(
         labelText: labelText,
         helperText: helperText,

@@ -1,10 +1,11 @@
+import 'package:flutter/material.dart';
 import 'package:dashboard_application/core/routes/routes.dart';
 import 'package:dashboard_application/utils/constant.dart';
 import 'package:dashboard_application/utils/validator.dart';
+import 'package:dashboard_application/services/auth_service.dart';
 import 'package:dashboard_application/widgets/custom_button.dart';
 import 'package:dashboard_application/widgets/custom_scaffold.dart';
 import 'package:dashboard_application/widgets/custom_text_field.dart';
-import 'package:flutter/material.dart';
 import 'package:dashboard_application/widgets/password_field.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -18,17 +19,35 @@ class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _cpfController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
 
-  void _login() {
+  void _login() async {
     if (_formKey.currentState!.validate()) {
-      _showSnackBar(AppConstants.loginSuccess);
-      Navigator.pushNamed(context, Routes.home);
+      setState(() => _isLoading = true);
+
+      try {
+        final response = await AuthService.login(
+          email: _cpfController.text.trim(),
+          password: _passwordController.text,
+        );
+
+        _showSnackBar(response.message, isError: false);
+        Navigator.pushReplacementNamed(context, Routes.home);
+      } catch (e) {
+        _showSnackBar(e.toString(), isError: true);
+      } finally {
+        if (mounted) setState(() => _isLoading = false);
+      }
     }
   }
 
-  void _showSnackBar(String message) {
+  void _showSnackBar(String message, {bool isError = false}) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), duration: Duration(seconds: 2)),
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 3),
+        backgroundColor: isError ? Colors.red : Colors.green.shade600,
+      ),
     );
   }
 
@@ -58,12 +77,18 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     SizedBox(height: 20),
-                    CustomTextField(controller: _cpfController, labelText: AppConstants.emailHint, validator: Validators.validateEmail),
+                    CustomTextField(
+                      controller: _cpfController,
+                      labelText: AppConstants.emailHint,
+                      validator: Validators.validateEmail,
+                      enabled: !_isLoading,
+                    ),
                     SizedBox(height: 20),
                     PasswordField(
                       controller: _passwordController,
                       labelText: AppConstants.passwordHint,
                       validator: Validators.validatePassword,
+                      enabled: !_isLoading,
                     ),
                     SizedBox(height: 20),
                     Row(
@@ -82,9 +107,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         SizedBox(width: 10),
                         Expanded(
                           child: CustomButton(
-                            text: AppConstants.loginButton,
+                            text: _isLoading ? 'Entrando...' : AppConstants.loginButton,
                             onPressed: _login,
-                            width: double.infinity, 
+                            width: double.infinity,
                           ),
                         ),
                       ],

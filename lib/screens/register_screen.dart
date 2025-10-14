@@ -2,6 +2,7 @@ import 'package:dashboard_application/core/routes/routes.dart';
 import 'package:dashboard_application/widgets/custom_button.dart';
 import 'package:dashboard_application/widgets/custom_scaffold.dart';
 import 'package:dashboard_application/widgets/custom_text_field.dart';
+import 'package:dashboard_application/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import '../widgets/password_field.dart';
 import '../utils/validator.dart';
@@ -9,28 +10,48 @@ import '../utils/constant.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
-  
+
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _cpfController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  bool _isLoading = false;
 
-  void _register() {
+  void _register() async {
     if (_formKey.currentState!.validate()) {
-      _showSnackBar(AppConstants.registerSuccess);
-      Navigator.pop(context);
+      setState(() => _isLoading = true);
+
+      try {
+        final response = await AuthService.register(
+          name: _nameController.text.trim(),
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+        );
+
+        _showSnackBar(response.message, isError: false);
+        Navigator.pushReplacementNamed(context, Routes.home);
+      } catch (e) {
+        _showSnackBar(e.toString(), isError: true);
+      } finally {
+        if (mounted) setState(() => _isLoading = false);
+      }
     }
   }
 
-  void _showSnackBar(String message) {
+  void _showSnackBar(String message, {bool isError = false}) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), duration: Duration(seconds: 2)),
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 3),
+        backgroundColor: isError ? Colors.red : Colors.green.shade600,
+      ),
     );
   }
 
@@ -60,23 +81,37 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       AppConstants.registerTitle,
                       style: TextStyle(
                         fontSize: 28,
-                        fontWeight: FontWeight.bold
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                     SizedBox(height: 30),
-                    CustomTextField(controller: _cpfController, labelText: AppConstants.emailHint, validator: Validators.validateEmail),
+                    CustomTextField(
+                      controller: _nameController,
+                      labelText: AppConstants.nameHint,
+                      validator: Validators.validateName,
+                      enabled: !_isLoading,
+                    ),
+                    SizedBox(height: 30),
+                    CustomTextField(
+                      controller: _emailController,
+                      labelText: AppConstants.emailHint,
+                      validator: Validators.validateEmail,
+                      enabled: !_isLoading,
+                    ),
                     SizedBox(height: 20),
                     PasswordField(
                       controller: _passwordController,
                       labelText: AppConstants.passwordHint,
                       helperText: AppConstants.passwordHelper,
                       validator: Validators.validatePassword,
+                      enabled: !_isLoading,
                     ),
                     SizedBox(height: 20),
                     PasswordField(
                       controller: _confirmPasswordController,
                       labelText: AppConstants.confirmPasswordHint,
                       validator: _validateConfirmPassword,
+                      enabled: !_isLoading,
                     ),
                     SizedBox(height: 30),
                     Row(
@@ -95,9 +130,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         SizedBox(width: 10),
                         Expanded(
                           child: CustomButton(
-                            text: AppConstants.registerButton,
+                            text: _isLoading ? 'Criando...' : AppConstants.registerButton,
                             onPressed: _register,
-                            width: double.infinity, 
+                            width: double.infinity,
                           ),
                         ),
                       ],
@@ -114,7 +149,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   void dispose() {
-    _cpfController.dispose();
+    _nameController.dispose();
+    _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
