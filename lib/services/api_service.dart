@@ -25,7 +25,6 @@ abstract class ApiService {
   }
 
   static dynamic _getAuthService() {
-    // Em Dart, você pode usar esta abordagem ou mover a lógica
     return null; // Será implementado conforme necessário
   }
 

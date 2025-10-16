@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
 import 'api_service.dart';
 
 class AuthService extends ApiService {
   static const String endpoint = '/auth';
+  static const String _tokenKey = 'auth_token';
 
   static String? _token;
   static User? _currentUser;
@@ -12,6 +14,20 @@ class AuthService extends ApiService {
   static String? get token => _token;
   static User? get currentUser => _currentUser;
   static bool get isAuthenticated => _token != null;
+
+  static Future<void> _saveToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_tokenKey, token);
+  }
+
+  static Future<void> tryAutoLogin() async {
+    final prefs = await SharedPreferences.getInstance();
+    final storedToken = prefs.getString(_tokenKey);
+
+    if (storedToken != null) {
+      _token = storedToken;
+    }
+  }
 
   static Future<AuthResponse> login({
     required String email,
@@ -28,6 +44,7 @@ class AuthService extends ApiService {
         final data = json.decode(response.body);
 
         _token = data['token'];
+        await _saveToken(_token!);
 
         if (data['user'] != null) {
           _currentUser = User.fromJson(data['user']);
@@ -74,6 +91,7 @@ class AuthService extends ApiService {
 
         _token = data['token'];
         _currentUser = User.fromJson(data['user']);
+        await _saveToken(_token!);
 
         return AuthResponse(
           success: true,
@@ -98,20 +116,22 @@ class AuthService extends ApiService {
     }
   }
 
-  static void logout() {
+  static Future<void> logout() async {
     _token = null;
     _currentUser = null;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_tokenKey);
   }
 
   static Map<String, String> get authenticatedHeaders => {
-    ...ApiService.headers,
-    if (_token != null) 'Authorization': 'Bearer $_token',
-  };
+        ...ApiService.headers,
+        if (_token != null) 'Authorization': 'Bearer $_token',
+      };
 }
 
 class AuthResponse {
   final bool success;
-  final String token;
+  final String token; 
   final User user;
   final String message;
 
