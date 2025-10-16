@@ -1,9 +1,9 @@
-class User {
+class UserModel {
   final int id;
   final String email;
   final String name;
 
-  User({
+  UserModel({
     required this.id,
     required this.email,
     required this.name,
@@ -17,8 +17,8 @@ class User {
     };
   }
 
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    return UserModel(
       id: json['id'],
       email: json['email'],
       name: json['name'],

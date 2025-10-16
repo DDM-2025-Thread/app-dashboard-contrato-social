@@ -1,4 +1,4 @@
-import 'package:dashboard_application/core/mocks/usage_log_mock.dart';
+import 'package:dashboard_application/core/mocks/database.dart';
 import 'package:dashboard_application/models/usage_log_model.dart';
 import 'package:dashboard_application/utils/constant.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +17,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String _selectedPeriod = 'Últimos 30 dias';
   DateTime _selectedDate = DateTime.now().subtract(const Duration(days: 30));
   final today = DateTime.now();
-  List<UsageModel> usageLogs = getUsageLogMock();
+  List<UsageModel> usageLogs = MockDatabase.usageLogs;
 
   late List<Map<String, dynamic>> _metrics;
 
