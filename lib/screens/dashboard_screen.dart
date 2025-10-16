@@ -2,11 +2,8 @@ import 'package:dashboard_application/core/mocks/usage_log_mock.dart';
 import 'package:dashboard_application/models/usage_log_model.dart';
 import 'package:dashboard_application/utils/constant.dart';
 import 'package:flutter/material.dart';
-import '../widgets/custom_scaffold.dart';
 import '../widgets/metric_card.dart';
 import '../widgets/line_chart_widget.dart';
-import '../widgets/bottom_nav_bar.dart';
-import '../utils/theme.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);
@@ -52,10 +49,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return CustomScaffold(
-      title: AppConstants.homeTitle,
-      hasDrawer: false,
-      body: SafeArea(
+    return SafeArea(
         child: Column(
           children: [
             _buildHeader(context, theme, colorScheme),
@@ -111,15 +105,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           ],
         ),
-      ),
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: BottomNavBar(
-          currentIndex: _currentIndex,
-          onTap: (index) => setState(() => _currentIndex = index),
-        ),
-      ),
-    );
+      );
   }
 
   Widget _buildHeader(
@@ -180,25 +166,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
               ),
             ),
-          ),
-
-          const Spacer(),
-
-          // User Avatar
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: colorScheme.primary,
-              border: Border.all(
-                color:
-                    colorScheme.outline ??
-                    colorScheme.onSurface.withOpacity(0.2),
-                width: 2,
-              ),
-            ),
-            child: const Icon(Icons.person, color: Colors.white, size: 20),
           ),
         ],
       ),

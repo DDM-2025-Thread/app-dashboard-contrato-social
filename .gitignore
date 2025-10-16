@@ -37,6 +37,7 @@ migrate_working_dir/
 # Generated plugin files
 /linux/flutter/
 /macos/Flutter/ephemeral/
+/macos/Flutter/GeneratedPluginRegistrant.*
 /windows/flutter/
 
 # Symbolication related

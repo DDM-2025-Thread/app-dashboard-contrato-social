@@ -21,8 +21,12 @@ class BottomNavBar extends StatelessWidget {
           label: 'Dashboard',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.settings),
-          label: 'Settings',
+          icon: Icon(Icons.key),
+          label: 'API Keys',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person),
+          label: 'User',
         ),
       ],
     );

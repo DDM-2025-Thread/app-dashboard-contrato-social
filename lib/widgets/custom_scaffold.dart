@@ -6,6 +6,8 @@ class CustomScaffold extends StatelessWidget {
   final Widget? floatingActionButton;
   final bool hasDrawer;
   final PreferredSizeWidget? bottom;
+  final Widget? bottomNavBar;
+  final bool automaticallyImplyLeading;
 
   CustomScaffold({
     required this.body,
@@ -13,6 +15,8 @@ class CustomScaffold extends StatelessWidget {
     this.floatingActionButton,
     this.hasDrawer = true,
     this.bottom,
+    this.bottomNavBar,
+    this.automaticallyImplyLeading = true,
   });
 
   @override
@@ -23,9 +27,11 @@ class CustomScaffold extends StatelessWidget {
         backgroundColor: Colors.black,
         centerTitle: true,
         bottom: bottom, 
-        iconTheme: IconThemeData(color: Colors.white),  
+        iconTheme: IconThemeData(color: Colors.white),
+        automaticallyImplyLeading: automaticallyImplyLeading,
       ),
       body: body,
+      bottomNavigationBar: bottomNavBar,
       floatingActionButton: floatingActionButton,
     );
   }
