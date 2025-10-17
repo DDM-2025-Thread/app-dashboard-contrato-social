@@ -9,10 +9,10 @@ class AuthService extends ApiService {
   static const String _tokenKey = 'auth_token';
 
   static String? _token;
-  static User? _currentUser;
+  static UserModel? _currentUser;
 
   static String? get token => _token;
-  static User? get currentUser => _currentUser;
+  static UserModel? get currentUser => _currentUser;
   static bool get isAuthenticated => _token != null;
 
   static Future<void> _saveToken(String token) async {
@@ -47,9 +47,9 @@ class AuthService extends ApiService {
         await _saveToken(_token!);
 
         if (data['user'] != null) {
-          _currentUser = User.fromJson(data['user']);
+          _currentUser = UserModel.fromJson(data['user']);
         } else {
-          _currentUser = User(id: data['id'], name: data['name'], email: email);
+          _currentUser = UserModel(id: data['id'], name: data['name'], email: email);
         }
 
         return AuthResponse(
@@ -90,7 +90,7 @@ class AuthService extends ApiService {
         final data = json.decode(response.body);
 
         _token = data['token'];
-        _currentUser = User.fromJson(data['user']);
+        _currentUser = UserModel.fromJson(data['user']);
         await _saveToken(_token!);
 
         return AuthResponse(
@@ -132,7 +132,7 @@ class AuthService extends ApiService {
 class AuthResponse {
   final bool success;
   final String token; 
-  final User user;
+  final UserModel user;
   final String message;
 
   AuthResponse({

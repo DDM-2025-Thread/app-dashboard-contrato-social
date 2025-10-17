@@ -7,45 +7,45 @@ import 'api_service.dart';
 class UserService extends ApiService {
   static const String endpoint = '/users';
 
-  static Future<List<User>> getUsers() async {
-    return ApiService.handleListRequest<User>(
+  static Future<List<UserModel>> getUsers() async {
+    return ApiService.handleListRequest<UserModel>(
       http.get(
         Uri.parse('${ApiService.baseUrl}$endpoint'),
         headers: ApiService.headers,
       ),
-      (json) => User.fromJson(json),
+      (json) => UserModel.fromJson(json),
     );
   }
 
-  static Future<User> getUserById(String id) async {
-    return ApiService.handleRequest<User>(
+  static Future<UserModel> getUserById(String id) async {
+    return ApiService.handleRequest<UserModel>(
       http.get(
         Uri.parse('${ApiService.baseUrl}$endpoint/$id'),
         headers: ApiService.headers,
       ),
-      (data) => User.fromJson(data),
+      (data) => UserModel.fromJson(data),
     );
   }
 
-  static Future<User> createUser(User user) async {
-    return ApiService.handleRequest<User>(
+  static Future<UserModel> createUser(UserModel user) async {
+    return ApiService.handleRequest<UserModel>(
       http.post(
         Uri.parse('${ApiService.baseUrl}$endpoint'),
         headers: ApiService.headers,
         body: json.encode(user.toJson()),
       ),
-      (data) => User.fromJson(data),
+      (data) => UserModel.fromJson(data),
     );
   }
 
-  static Future<User> updateUser(String id, User user) async {
-    return ApiService.handleRequest<User>(
+  static Future<UserModel> updateUser(String id, UserModel user) async {
+    return ApiService.handleRequest<UserModel>(
       http.put(
         Uri.parse('${ApiService.baseUrl}$endpoint/$id'),
         headers: ApiService.headers,
         body: json.encode(user.toJson()),
       ),
-      (data) => User.fromJson(data),
+      (data) => UserModel.fromJson(data),
     );
   }
 
