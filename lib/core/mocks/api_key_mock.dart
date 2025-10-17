@@ -4,6 +4,7 @@ List<ApiKeyModel> getApiKeyMock() {
   return [
     ApiKeyModel(
       id: '1',
+      name: 'Chave 1',
       userID: '1',
       key: 'api_key_1',
       status: 'active',
@@ -11,6 +12,7 @@ List<ApiKeyModel> getApiKeyMock() {
     ),
     ApiKeyModel(
       id: '2',
+      name: 'Chave 2',
       userID: '2',
       key: 'api_key_2',
       status: 'inactive',
