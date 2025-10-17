@@ -1,5 +1,6 @@
 import 'package:dashboard_application/core/mocks/database.dart';
 import 'package:dashboard_application/models/api_key_model.dart';
+import 'package:dashboard_application/utils/fuctions.dart';
 import 'package:dashboard_application/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -23,25 +24,28 @@ class _ApiKeyScreenState extends State<ApiKeyScreen> {
         onPressed: _showAddApiKeyDialog,
         child: const Icon(Icons.add),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          GridView.builder(
-            shrinkWrap: true,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 1,
-              childAspectRatio: 8,
+      body: ListView.builder(
+        shrinkWrap: true,
+        itemCount: MockDatabase.apiKeys.length,
+        itemBuilder: (context, index) {
+          return Card(
+            color: Colors.grey[200],
+            margin: const EdgeInsets.all(8),
+            child: ListTile(
+              leading: const Icon(Icons.vpn_key_outlined),
+              title: Text(MockDatabase.apiKeys[index].name),
+              subtitle: Text(
+                'Criado em: ${formateDate(MockDatabase.apiKeys[index].createdAt)}',
+              ),
+              trailing: IconButton(
+                icon: const Icon(Icons.more_vert),
+                onPressed: () {
+                  // TODO: Adicionar lógica para deletar ou editar a chave
+                },
+              ),
             ),
-            itemCount: MockDatabase.apiKeys.length,
-            itemBuilder: (context, index) {
-              return Card(
-                color: Colors.grey[200],
-                margin: const EdgeInsets.all(8),
-                child: Center(child: Text(MockDatabase.apiKeys[index].name)),
-              );
-            },
-          ),
-        ],
+          );
+        },
       ),
     );
   }
