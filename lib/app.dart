@@ -11,7 +11,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Gerenciamento de Estoque',
+      title: 'App',
       theme: ThemeData(primarySwatch: Colors.cyan),
       debugShowCheckedModeBanner: false,
       initialRoute: Routes.login,
@@ -21,5 +21,5 @@ class App extends StatelessWidget {
         Routes.home: (context) => const AuthGuard(child: MainScreen()),
       },
     );
-    }
   }
+}

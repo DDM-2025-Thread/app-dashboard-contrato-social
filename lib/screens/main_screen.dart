@@ -1,6 +1,7 @@
 import 'package:dashboard_application/screens/api_key_screen.dart';
 import 'package:dashboard_application/screens/dashboard_screen.dart';
 import 'package:dashboard_application/screens/user_screen.dart';
+import 'package:dashboard_application/screens/upload_pdf_screen.dart';
 import 'package:dashboard_application/widgets/bottom_nav_bar.dart';
 import 'package:dashboard_application/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
@@ -19,9 +20,15 @@ class _MainScreenState extends State<MainScreen> {
     DashboardScreen(),
     ApiKeyScreen(),
     UserScreen(),
+    UploadPdfScreen(),
   ];
 
-  final List<String> _titles = const ['Dashboard', 'API Keys', 'User'];
+  final List<String> _titles = const [
+    'Dashboard',
+    'API Keys',
+    'User',
+    'Upload PDF',
+  ];
 
   void _onTap(int index) {
     setState(() {
@@ -35,10 +42,7 @@ class _MainScreenState extends State<MainScreen> {
       title: _titles[_currentIndex],
       automaticallyImplyLeading: false,
       body: _screens[_currentIndex],
-      bottomNavBar: BottomNavBar(
-        currentIndex: _currentIndex,
-        onTap: _onTap, 
-      ),
+      bottomNavBar: BottomNavBar(currentIndex: _currentIndex, onTap: _onTap),
     );
   }
 }
