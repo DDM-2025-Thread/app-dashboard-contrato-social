@@ -20,7 +20,7 @@ class _MainScreenState extends State<MainScreen> {
     DashboardScreen(),
     ApiKeyScreen(),
     UserScreen(),
-    UploadPdfScreen(),
+    PdfUploadScreen(),
   ];
 
   final List<String> _titles = const [
