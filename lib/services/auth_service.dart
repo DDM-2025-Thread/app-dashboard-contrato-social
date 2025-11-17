@@ -49,7 +49,7 @@ class AuthService extends ApiService {
         if (data['user'] != null) {
           _currentUser = UserModel.fromJson(data['user']);
         } else {
-          _currentUser = UserModel(id: data['id'], name: data['name'], email: email);
+          _currentUser = UserModel(name: data['name'], email: email);
         }
 
         return AuthResponse(
@@ -86,12 +86,19 @@ class AuthService extends ApiService {
         body: json.encode({'name': name, 'email': email, 'password': password}),
       );
 
+      final data = json.decode(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final data = json.decode(response.body);
-
         _token = data['token'];
-        _currentUser = UserModel.fromJson(data['user']);
         await _saveToken(_token!);
+
+        if (data['user'] != null) {
+          _currentUser = UserModel.fromJson(data['user']);
+        } else {
+          _currentUser = UserModel(
+            name: data['name'] ?? name,
+            email: data['email'] ?? email
+          );
+        }
 
         return AuthResponse(
           success: true,
@@ -103,7 +110,7 @@ class AuthService extends ApiService {
         throw ApiException('Email já está em uso', 409);
       } else if (response.statusCode == 400) {
         final data = json.decode(response.body);
-        throw ApiException(data['message'] ?? 'Dados inválidos', 400);
+        throw ApiException(data['detail'] ?? 'Dados inválidos', 400);
       } else {
         throw ApiException(
           'Erro no registro: ${response.statusCode}',
