@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 class ChatModel {
   final int id;
   final String ticketUuid;
