@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class ChatModel {
   final int id;
   final String ticketUuid;
@@ -17,15 +19,29 @@ class ChatModel {
     required this.userId,
   });
 
-  factory ChatModel.fromJson(Map<String, dynamic> json) => ChatModel(
-    id: json['id'],
-    ticketUuid: json['ticket_uuid'],
-    status: json['status'],
-    responseJson: json['response_json'] != null ? json['response_json'] : null,
-    errorMessage: json['error_message'] != null ? json['error_message'] : null,
-    createdAt: DateTime.parse(json['created_at']),
-    userId: json['user_id'],
-  );
+  factory ChatModel.fromJson(Map<String, dynamic> json) {
+    final responseData = json['response_json'];
+    String? encodedResponse;
+    if (responseData != null) {
+      if (responseData is Map<String, dynamic>) {
+        encodedResponse = jsonEncode(responseData);
+      } else if (responseData is String) {
+        encodedResponse = responseData;
+      }
+    }
+
+    return ChatModel(
+      id: json['id'],
+      ticketUuid: json['ticket_uuid'],
+      status: json['status'],
+      responseJson: encodedResponse,
+      errorMessage: json['error_message'] != null
+          ? json['error_message']
+          : null,
+      createdAt: DateTime.parse(json['created_at']),
+      userId: json['user_id'],
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     "id": id,
