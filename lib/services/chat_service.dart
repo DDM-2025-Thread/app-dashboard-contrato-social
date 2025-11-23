@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:file_picker/file_picker.dart';
 import '../models/chat_model.dart';
 import 'api_service.dart';
 
@@ -28,7 +28,7 @@ class ChatService extends ApiService {
     );
   }
 
-  static Future<String> upload(File pdfFile) async {
+  static Future<String> upload(PlatformFile pdfFile) async {
     final uri = Uri.parse('${ApiService.baseUrl}$endpoint/upload');
     final request = http.MultipartRequest('POST', uri);
     final authHeaders = ApiService.authenticatedHeaders;
@@ -37,9 +37,29 @@ class ChatService extends ApiService {
         request.headers[key] = value;
       }
     });
-    request.files.add(
-      await http.MultipartFile.fromPath('pdf_file', pdfFile.path),
-    );
+
+    http.MultipartFile multipartFile;
+    if (pdfFile.bytes != null) {
+      // WEB
+      multipartFile = http.MultipartFile.fromBytes(
+        'pdf_file',
+        pdfFile.bytes!,
+        filename: pdfFile.name,
+      );
+    } else if (pdfFile.path != null) {
+      // NATIVE
+      multipartFile = await http.MultipartFile.fromPath(
+        'pdf_file',
+        pdfFile.path!,
+        filename: pdfFile.name,
+      );
+    } else {
+      throw Exception(
+        'Arquivo inválido: o arquivo não possui bytes nem caminho.',
+      );
+    }
+    request.files.add(multipartFile);
+
     final response = await request.send();
     final http.Response httpResponse = await http.Response.fromStream(response);
     if (httpResponse.statusCode >= 200 && httpResponse.statusCode < 300) {

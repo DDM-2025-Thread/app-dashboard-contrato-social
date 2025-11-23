@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import '../services/chat_service.dart';
@@ -50,22 +49,29 @@ class _ChatUploadScreenState extends State<ChatUploadScreen> {
       );
       return;
     }
+    // Garantia de que o arquivo tem conteúdo para upload
+    if (_selectedPlatformFile!.bytes == null &&
+        _selectedPlatformFile!.path == null) {
+      _showSnackbar(
+        'Arquivo inválido: Não foi possível carregar o conteúdo do arquivo.',
+        color: Colors.red,
+      );
+      return;
+    }
 
     setState(() {
       _isUploading = true;
-      _statusMessage = 'Iniciando upload...';
+      _statusMessage = 'Iniciando upload de ${_selectedPlatformFile!.name}...';
     });
 
     try {
-      // Cria o objeto dart:io/File necessário para o ChatService.upload
-      final File fileToUpload = File(_selectedPlatformFile!.path!);
-
-      // Chama o serviço de upload real
-      final String ticket = await ChatService.upload(fileToUpload);
+      // Chama o serviço de upload, passando o PlatformFile.
+      // O ChatService agora lida com a compatibilidade Web/Nativo.
+      final String ticket = await ChatService.upload(_selectedPlatformFile!);
 
       setState(() {
         _ticketId = ticket;
-        _statusMessage = 'Upload Concluído! O processamento foi iniciado.';
+        _statusMessage = 'Upload Concluído! O ticket $ticket foi gerado.';
       });
       _showSnackbar('Ticket $ticket gerado!', color: Colors.green);
     } catch (e) {
