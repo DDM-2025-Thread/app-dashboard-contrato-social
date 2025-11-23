@@ -17,20 +17,17 @@ class _ChatUploadScreenState extends State<ChatUploadScreen> {
 
   final primaryColor = Colors.indigo.shade700;
 
-  // 1. Função para escolher o arquivo PDF
   Future<void> _choosePdf() async {
-    // Chama o mock (ou o FilePicker real)
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pdf'],
     );
-
     if (result != null) {
       final file = result.files.single;
       setState(() {
         _selectedPlatformFile = file;
         _statusMessage = 'PDF Selecionado: ${file.name}';
-        _ticketId = null; // Limpa o ticket se um novo arquivo for escolhido
+        _ticketId = null;
       });
       _showSnackbar('Arquivo pronto para upload.', color: Colors.green);
     } else {
@@ -40,7 +37,6 @@ class _ChatUploadScreenState extends State<ChatUploadScreen> {
     }
   }
 
-  // 2. Função para submeter e iniciar o upload
   Future<void> _submitUpload() async {
     if (_selectedPlatformFile == null) {
       _showSnackbar(
@@ -49,7 +45,6 @@ class _ChatUploadScreenState extends State<ChatUploadScreen> {
       );
       return;
     }
-    // Garantia de que o arquivo tem conteúdo para upload
     if (_selectedPlatformFile!.bytes == null &&
         _selectedPlatformFile!.path == null) {
       _showSnackbar(
@@ -58,17 +53,12 @@ class _ChatUploadScreenState extends State<ChatUploadScreen> {
       );
       return;
     }
-
     setState(() {
       _isUploading = true;
       _statusMessage = 'Iniciando upload de ${_selectedPlatformFile!.name}...';
     });
-
     try {
-      // Chama o serviço de upload, passando o PlatformFile.
-      // O ChatService agora lida com a compatibilidade Web/Nativo.
       final String ticket = await ChatService.upload(_selectedPlatformFile!);
-
       setState(() {
         _ticketId = ticket;
         _statusMessage = 'Upload Concluído! O ticket $ticket foi gerado.';
@@ -78,7 +68,6 @@ class _ChatUploadScreenState extends State<ChatUploadScreen> {
       setState(() {
         _statusMessage = 'Falha no Upload. Verifique o console.';
       });
-      // Em um app real, você pode querer logar a exceção
       print('Erro de Upload: $e');
       _showSnackbar('Erro: $e', color: Colors.red);
     } finally {
@@ -89,7 +78,6 @@ class _ChatUploadScreenState extends State<ChatUploadScreen> {
     }
   }
 
-  // Função auxiliar para mostrar mensagens
   void _showSnackbar(String message, {Color color = Colors.blue}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -103,11 +91,6 @@ class _ChatUploadScreenState extends State<ChatUploadScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Análise de Contrato (PDF)'),
-        backgroundColor: primaryColor,
-        foregroundColor: Colors.white,
-      ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
@@ -126,9 +109,7 @@ class _ChatUploadScreenState extends State<ChatUploadScreen> {
               ),
               const SizedBox(height: 30),
 
-              // **********************************************
               // Caixa para Visualizar o PDF Escolhido
-              // **********************************************
               Card(
                 elevation: 4,
                 shape: RoundedRectangleBorder(
@@ -164,7 +145,6 @@ class _ChatUploadScreenState extends State<ChatUploadScreen> {
                               : Colors.black87,
                         ),
                       ),
-
                       const Divider(height: 30),
 
                       // Botão "Escolher PDF"
@@ -190,9 +170,7 @@ class _ChatUploadScreenState extends State<ChatUploadScreen> {
               ),
               const SizedBox(height: 30),
 
-              // **********************************************
-              // Botão de Submeter e Indicador de Status
-              // **********************************************
+              // Botão de Submeter
               if (_isUploading)
                 const Column(
                   children: [
@@ -225,12 +203,9 @@ class _ChatUploadScreenState extends State<ChatUploadScreen> {
                     ),
                   ),
                 ),
-
               const SizedBox(height: 30),
 
-              // **********************************************
               // Caixa de Exibição do Ticket
-              // **********************************************
               if (_ticketId != null)
                 Card(
                   elevation: 6,
