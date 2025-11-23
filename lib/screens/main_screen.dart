@@ -1,5 +1,5 @@
 import 'package:dashboard_application/screens/api_key_screen.dart';
-import 'package:dashboard_application/screens/chat_upload_screen.dart';
+import 'package:dashboard_application/screens/chat_visualize_screen.dart';
 import 'package:dashboard_application/screens/dashboard_screen.dart';
 import 'package:dashboard_application/screens/user_screen.dart';
 import 'package:dashboard_application/widgets/bottom_nav_bar.dart';
@@ -20,7 +20,7 @@ class _MainScreenState extends State<MainScreen> {
     DashboardScreen(),
     ApiKeyScreen(),
     UserScreen(),
-    ChatUploadScreen(),
+    ChatVisualizeScreen(ticketUuid: "3f2f647e-ea81-4518-ba79-db6bccba9183"),
   ];
 
   final List<String> _titles = const ['Dashboard', 'API Keys', 'User', 'Chats'];

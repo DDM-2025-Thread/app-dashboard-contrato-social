@@ -20,7 +20,7 @@ class ChatModel {
   factory ChatModel.fromJson(Map<String, dynamic> json) => ChatModel(
     id: json['id'],
     ticketUuid: json['ticket_uuid'],
-    status: json['user_id'],
+    status: json['status'],
     responseJson: json['response_json'] != null ? json['response_json'] : null,
     errorMessage: json['error_message'] != null ? json['error_message'] : null,
     createdAt: DateTime.parse(json['created_at']),
