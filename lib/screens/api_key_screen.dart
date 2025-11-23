@@ -1,6 +1,6 @@
 import 'package:dashboard_application/core/mocks/database.dart';
 import 'package:dashboard_application/models/api_key_model.dart';
-import 'package:dashboard_application/utils/fuctions.dart';
+import 'package:dashboard_application/utils/functions.dart';
 import 'package:dashboard_application/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -35,7 +35,7 @@ class _ApiKeyScreenState extends State<ApiKeyScreen> {
               leading: const Icon(Icons.vpn_key_outlined),
               title: Text(MockDatabase.apiKeys[index].name),
               subtitle: Text(
-                'Criado em: ${formateDate(MockDatabase.apiKeys[index].createdAt)}',
+                'Criado em: ${formatDate(MockDatabase.apiKeys[index].createdAt)}',
               ),
               trailing: IconButton(
                 icon: const Icon(Icons.more_vert),

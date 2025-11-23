@@ -12,7 +12,7 @@ class ChatService extends ApiService {
     return ApiService.handleListRequest<ChatModel>(
       http.get(
         Uri.parse('${ApiService.baseUrl}$endpoint/find-by-user'),
-        headers: ApiService.headers,
+        headers: ApiService.authenticatedHeaders,
       ),
       (json) => ChatModel.fromJson(json),
     );
@@ -22,7 +22,7 @@ class ChatService extends ApiService {
     return ApiService.handleRequest<ChatModel>(
       http.get(
         Uri.parse('${ApiService.baseUrl}$endpoint/get-response/$ticket'),
-        headers: ApiService.headers,
+        headers: ApiService.authenticatedHeaders,
       ),
       (data) => ChatModel.fromJson(data),
     );
@@ -31,21 +31,31 @@ class ChatService extends ApiService {
   static Future<String> upload(File pdfFile) async {
     final uri = Uri.parse('${ApiService.baseUrl}$endpoint/upload');
     final request = http.MultipartRequest('POST', uri);
-    final headers = ApiService.headers;
-    request.headers.addAll(headers);
+    final authHeaders = ApiService.authenticatedHeaders;
+    authHeaders.forEach((key, value) {
+      if (key.toLowerCase() != 'content-type') {
+        request.headers[key] = value;
+      }
+    });
     request.files.add(
       await http.MultipartFile.fromPath('pdf_file', pdfFile.path),
     );
     final response = await request.send();
     final http.Response httpResponse = await http.Response.fromStream(response);
     if (httpResponse.statusCode >= 200 && httpResponse.statusCode < 300) {
-      final data = json.decode(httpResponse.body);
-      return data;
+      final String ticketId = json.decode(httpResponse.body);
+      return ticketId;
     } else {
-      final errorBody = json.decode(httpResponse.body);
-      throw Exception('Erro ${httpResponse.statusCode}: ${errorBody['detail'] ?? httpResponse.reasonPhrase}');
+      try {
+        final errorBody = json.decode(httpResponse.body);
+        throw Exception(
+          'Erro ${httpResponse.statusCode}: ${errorBody['detail'] ?? httpResponse.reasonPhrase}',
+        );
+      } catch (_) {
+        throw Exception(
+          'Erro ${httpResponse.statusCode}: ${httpResponse.reasonPhrase}',
+        );
+      }
     }
   }
 }
-
-// final headers = await ApiService.getAuthHeaders();
