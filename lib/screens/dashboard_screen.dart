@@ -6,16 +6,17 @@ import '../widgets/metric_card.dart';
 import '../widgets/line_chart_widget.dart';
 
 class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({Key? key}) : super(key: key);
+  const DashboardScreen({super.key});
 
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  int _currentIndex = 0;
   String _selectedPeriod = 'Últimos 30 dias';
-  DateTime _selectedDate = DateTime.now().subtract(const Duration(days: 30));
+  final DateTime _selectedDate = DateTime.now().subtract(
+    const Duration(days: 30),
+  );
   final today = DateTime.now();
   List<UsageModel> usageLogs = MockDatabase.usageLogs;
 
@@ -50,62 +51,62 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final colorScheme = theme.colorScheme;
 
     return SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(context, theme, colorScheme),
+      child: Column(
+        children: [
+          _buildHeader(context, theme, colorScheme),
 
-            // Metrics Section
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Page Analytics Title
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      child: Text(
-                        AppConstants.homeSubtitle,
-                        style: theme.textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: colorScheme.onBackground,
+          // Metrics Section
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Page Analytics Title
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: Text(
+                      AppConstants.homeSubtitle,
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.onBackground,
+                      ),
+                    ),
+                  ),
+
+                  // Metrics Grid
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                          childAspectRatio: 1.2,
                         ),
-                      ),
+                    itemCount: _metrics.length,
+                    itemBuilder: (context, index) => MetricCard(
+                      title: _metrics[index]['title'],
+                      value: _metrics[index]['value'],
+                      change: _metrics[index]['change'],
+                      isPositive: _metrics[index]['isPositive'],
+                      icon: _metrics[index]['icon'],
+                      color: _metrics[index]['color'],
                     ),
+                  ),
 
-                    // Metrics Grid
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 12,
-                            mainAxisSpacing: 12,
-                            childAspectRatio: 1.2,
-                          ),
-                      itemCount: _metrics.length,
-                      itemBuilder: (context, index) => MetricCard(
-                        title: _metrics[index]['title'],
-                        value: _metrics[index]['value'],
-                        change: _metrics[index]['change'],
-                        isPositive: _metrics[index]['isPositive'],
-                        icon: _metrics[index]['icon'],
-                        color: _metrics[index]['color'],
-                      ),
-                    ),
+                  const SizedBox(height: 24),
 
-                    const SizedBox(height: 24),
-
-                    // Chart Section
-                    _buildChartSection(context, theme, colorScheme),
-                  ],
-                ),
+                  // Chart Section
+                  _buildChartSection(context, theme, colorScheme),
+                ],
               ),
             ),
-          ],
-        ),
-      );
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildHeader(
@@ -117,12 +118,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: colorScheme.surface,
-        border: Border(
-          bottom: BorderSide(
-            color:
-                colorScheme.outline ?? colorScheme.onSurface.withOpacity(0.2),
-          ),
-        ),
+        border: Border(bottom: BorderSide(color: colorScheme.outline)),
       ),
       child: Row(
         children: [
@@ -130,11 +126,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color:
-                    colorScheme.outline ??
-                    colorScheme.onSurface.withOpacity(0.2),
-              ),
+              border: Border.all(color: colorScheme.outline),
             ),
             child: Material(
               color: Colors.transparent,
@@ -151,14 +143,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       Icon(
                         Icons.filter_list,
                         size: 16,
-                        color: colorScheme.onSurface.withOpacity(0.7),
+                        color: colorScheme.onSurface,
                       ),
                       const SizedBox(width: 8),
                       Text(
                         _selectedPeriod,
                         style: TextStyle(
                           fontSize: 14,
-                          color: colorScheme.onSurface.withOpacity(0.7),
+                          color: colorScheme.onSurface,
                         ),
                       ),
                     ],
@@ -185,7 +177,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: colorScheme.shadow.withOpacity(0.1),
+            color: colorScheme.shadow,
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -204,10 +196,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           const SizedBox(height: 8),
           Text(
             'Total visitors for the selected period',
-            style: TextStyle(
-              color: colorScheme.onSurface.withOpacity(0.7),
-              fontSize: 14,
-            ),
+            style: TextStyle(color: colorScheme.onSurface, fontSize: 14),
           ),
           const SizedBox(height: 16),
           SizedBox(
@@ -237,9 +226,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   String _getTotalCost() {
     final totalCost = usageLogs
-        .where(
-          (log) => log.timestamp.isAfter(_selectedDate),
-        )
+        .where((log) => log.timestamp.isAfter(_selectedDate))
         .fold<double>(0.0, (sum, log) => sum + log.cost);
     return totalCost.toString();
   }

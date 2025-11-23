@@ -22,6 +22,8 @@ class ApiKeyService extends ApiService {
               ...item,
               'id': item['id'],
               'userID': item['user_id'],
+              'name': item['name'],
+              'key': item['key'],
               'status': item['status'],
               'createdAt': item['created_at'],
             });
@@ -43,10 +45,7 @@ class ApiKeyService extends ApiService {
         ),
         (body) {
           final data = body['data']['api_key'];
-          return ApiKeyModel(
-            name: data['name'] ?? name,
-            key: data['key'] ?? data,
-          );
+          return ApiKeyModel(name: name, key: data);
         },
       );
     } catch (e) {
@@ -54,11 +53,11 @@ class ApiKeyService extends ApiService {
     }
   }
 
-  static Future<void> deleteApiKey(String id) async {
+  static Future<void> deleteApiKey(int id) async {
     try {
       await ApiService.handleRequest(
         http.delete(
-          Uri.parse('${ApiService.baseUrl}$_endpoint/$id'),
+          Uri.parse('${ApiService.baseUrl}$_endpoint/revoke/$id'),
           headers: ApiService.authenticatedHeaders,
         ),
         (_) => null,
