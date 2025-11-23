@@ -46,6 +46,12 @@ class ApiKeyService extends ApiService {
           return ApiKeyModel(
             name: data['name'] ?? name,
             key: data['key'] ?? data,
+
+            // retirar valores abaixo (x), é só para não bugar
+            id: '1', // x
+            userID: '1', // x
+            status: 'ACTIVE', // x
+            createdAt: DateTime.now().toUtc(), // x
           );
         },
       );
