@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
 import '../services/chat_service.dart';
 
@@ -76,6 +77,14 @@ class _ChatUploadScreenState extends State<ChatUploadScreen> {
         // Opcional: _selectedFile = null; para limpar o estado
       });
     }
+  }
+
+  Future<void> _copyTicketToClipboard(String ticketId) async {
+    await Clipboard.setData(ClipboardData(text: ticketId));
+    _showSnackbar(
+      'Código do ticket copiado para a área de transferência!',
+      color: Colors.blue,
+    );
   }
 
   void _showSnackbar(String message, {Color color = Colors.blue}) {
@@ -228,14 +237,32 @@ class _ChatUploadScreenState extends State<ChatUploadScreen> {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        SelectableText(
-                          _ticketId!,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 0.5,
-                            color: Colors.black87,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // Exibição do Ticket
+                            Expanded(
+                              child: SelectableText(
+                                _ticketId!,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.5,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            ),
+                            // Botão de Copiar
+                            IconButton(
+                              icon: const Icon(
+                                Icons.copy,
+                                color: Colors.indigo,
+                              ),
+                              onPressed: () =>
+                                  _copyTicketToClipboard(_ticketId!),
+                              tooltip: 'Copiar Ticket ID',
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 10),
                         const Text(
