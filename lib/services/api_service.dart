@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../core/session_manager.dart';
 
 abstract class ApiService {
   static String? get baseUrl => dotenv.env['BASE_URL'];
@@ -8,24 +9,11 @@ abstract class ApiService {
   static Map<String, String> get headers => {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
-    // 'Authorization': 'Bearer ${AuthService.token}',
   };
 
   static Map<String, String> get authenticatedHeaders {
-    try {
-      final authService = _getAuthService();
-      return {
-        ...headers,
-        if (authService?.token != null)
-          'Authorization': 'Bearer ${authService!.token}',
-      };
-    } catch (e) {
-      return headers;
-    }
-  }
-
-  static dynamic _getAuthService() {
-    return null; // Será implementado conforme necessário
+    final token = SessionManager.token;
+    return {...headers, if (token != null) 'Authorization': 'Bearer $token'};
   }
 
   static Future<T> handleRequest<T>(

@@ -2,22 +2,23 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
+import '../core/session_manager.dart';
 import 'api_service.dart';
 
 class AuthService extends ApiService {
   static const String endpoint = '/auth';
   static const String _tokenKey = 'auth_token';
 
-  static String? _token;
   static UserModel? _currentUser;
 
-  static String? get token => _token;
+  static String? get token => SessionManager.token;
   static UserModel? get currentUser => _currentUser;
-  static bool get isAuthenticated => _token != null;
+  static bool get isAuthenticated => SessionManager.token != null;
 
   static Future<void> _saveToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_tokenKey, token);
+    SessionManager.setToken(token);
   }
 
   static Future<void> tryAutoLogin() async {
@@ -25,7 +26,7 @@ class AuthService extends ApiService {
     final storedToken = prefs.getString(_tokenKey);
 
     if (storedToken != null) {
-      _token = storedToken;
+      SessionManager.setToken(storedToken);
     }
   }
 
@@ -43,8 +44,8 @@ class AuthService extends ApiService {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
 
-        _token = data['token'];
-        await _saveToken(_token!);
+        final token = data['token'];
+        await _saveToken(token);
 
         if (data['user'] != null) {
           _currentUser = UserModel.fromJson(data['user']);
@@ -54,7 +55,7 @@ class AuthService extends ApiService {
 
         return AuthResponse(
           success: true,
-          token: _token!,
+          token: token,
           user: _currentUser!,
           message: data['message']?.isNotEmpty == true
               ? data['message']
@@ -88,21 +89,15 @@ class AuthService extends ApiService {
 
       final data = json.decode(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
-        _token = data['token'];
-        await _saveToken(_token!);
+        final data = json.decode(response.body);
 
-        if (data['user'] != null) {
-          _currentUser = UserModel.fromJson(data['user']);
-        } else {
-          _currentUser = UserModel(
-            name: data['name'] ?? name,
-            email: data['email'] ?? email
-          );
-        }
+        final token = data['token'];
+        _currentUser = UserModel.fromJson(data['user']);
+        await _saveToken(token);
 
         return AuthResponse(
           success: true,
-          token: _token!,
+          token: token,
           user: _currentUser!,
           message: 'Conta criada com sucesso',
         );
@@ -124,21 +119,16 @@ class AuthService extends ApiService {
   }
 
   static Future<void> logout() async {
-    _token = null;
+    SessionManager.clear();
     _currentUser = null;
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_tokenKey);
   }
-
-  static Map<String, String> get authenticatedHeaders => {
-        ...ApiService.headers,
-        if (_token != null) 'Authorization': 'Bearer $_token',
-      };
 }
 
 class AuthResponse {
   final bool success;
-  final String token; 
+  final String token;
   final UserModel user;
   final String message;
 
