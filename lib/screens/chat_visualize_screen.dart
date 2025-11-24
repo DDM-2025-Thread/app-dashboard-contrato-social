@@ -1,29 +1,18 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Pacote necessário para formatar a data (adicione ao pubspec.yaml)
-
-// Substitua pelos seus caminhos reais
+import 'package:intl/intl.dart';
 import '../services/chat_service.dart';
 import '../models/chat_model.dart';
 
 class ChatVisualizeScreen extends StatelessWidget {
   final String ticketUuid;
-
-  // O ticketUuid é obrigatório no construtor para buscar os dados
   const ChatVisualizeScreen({super.key, required this.ticketUuid});
-
   final Color primaryColor = Colors.indigo;
 
   @override
   Widget build(BuildContext buildContext) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Detalhes do Ticket: ${ticketUuid.substring(0, 8)}...'),
-        backgroundColor: primaryColor,
-        foregroundColor: Colors.white,
-      ),
       body: FutureBuilder<ChatModel>(
-        // 1. Chama o método de serviço para buscar o chat específico
         future: ChatService.getResponse(ticketUuid),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -31,7 +20,6 @@ class ChatVisualizeScreen extends StatelessWidget {
           }
 
           if (snapshot.hasError) {
-            // 2. Exibe o erro
             return Center(
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
@@ -66,7 +54,6 @@ class ChatVisualizeScreen extends StatelessWidget {
           }
 
           if (!snapshot.hasData) {
-            // 3. Caso não retorne dados (improvável se o erro não for lançado)
             return const Center(
               child: Text(
                 'Chat não encontrado.',
@@ -75,7 +62,7 @@ class ChatVisualizeScreen extends StatelessWidget {
             );
           }
 
-          // 4. Constrói a tela com o objeto ChatModel
+          // Tela principal
           final chat = snapshot.data!;
           return SingleChildScrollView(
             padding: const EdgeInsets.all(20.0),
@@ -85,13 +72,11 @@ class ChatVisualizeScreen extends StatelessWidget {
                 _buildInfoCard(chat),
                 const SizedBox(height: 25),
 
-                // Exibe Erro se houver
                 if (chat.errorMessage != null && chat.errorMessage!.isNotEmpty)
                   _buildErrorMessageBox(chat.errorMessage!),
 
                 const SizedBox(height: 25),
 
-                // Exibe responseJson de forma expansível se houver
                 if (chat.responseJson != null)
                   _buildResponseJsonTile(chat.responseJson!),
               ],
@@ -102,7 +87,7 @@ class ChatVisualizeScreen extends StatelessWidget {
     );
   }
 
-  // Card principal com as informações básicas (Ticket, Status, Data)
+  // Card principal
   Widget _buildInfoCard(ChatModel chat) {
     final bool isError =
         chat.errorMessage != null && chat.errorMessage!.isNotEmpty;
@@ -127,7 +112,6 @@ class ChatVisualizeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Título
             Text(
               'Status da Requisição',
               style: TextStyle(
@@ -138,7 +122,6 @@ class ChatVisualizeScreen extends StatelessWidget {
             ),
             const Divider(height: 20),
 
-            // 1. Ticket UUID
             _buildInfoRow(
               icon: Icons.vpn_key,
               label: 'UUID do Ticket:',
@@ -146,7 +129,6 @@ class ChatVisualizeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 15),
 
-            // 2. Status
             _buildInfoRow(
               icon: statusIcon,
               label: 'Status:',
@@ -155,7 +137,6 @@ class ChatVisualizeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 15),
 
-            // 3. Data de Criação (Inteligível)
             _buildInfoRow(
               icon: Icons.access_time,
               label: 'Data/Hora de Criação:',
@@ -167,7 +148,7 @@ class ChatVisualizeScreen extends StatelessWidget {
     );
   }
 
-  // Linha de Informação Padrão (Ícone e Conteúdo)
+  // (Ícone + Conteúdo)
   Widget _buildInfoRow({
     required IconData icon,
     required String label,
@@ -234,12 +215,11 @@ class ChatVisualizeScreen extends StatelessWidget {
     );
   }
 
-  // Widget para Response JSON (Expansível)
+  // Widget para Response JSON
   Widget _buildResponseJsonTile(String jsonString) {
     String prettyJson;
     try {
       final jsonObject = jsonDecode(jsonString);
-      // Formata o JSON com indentação para melhor leitura
       prettyJson = const JsonEncoder.withIndent('  ').convert(jsonObject);
     } catch (e) {
       prettyJson = 'Erro ao formatar JSON. Conteúdo bruto:\n$jsonString';
@@ -278,7 +258,7 @@ class ChatVisualizeScreen extends StatelessWidget {
               child: SelectableText(
                 prettyJson,
                 style: const TextStyle(
-                  fontFamily: 'monospace', // Fonte ideal para código/JSON
+                  fontFamily: 'monospace',
                   fontSize: 13,
                   color: Colors.black87,
                   height: 1.4,
