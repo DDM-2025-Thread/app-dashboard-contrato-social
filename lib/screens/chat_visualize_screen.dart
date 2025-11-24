@@ -88,7 +88,7 @@ class ChatVisualizeScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                          color: Colors.indigo,
                         ),
                       ),
                     ),
