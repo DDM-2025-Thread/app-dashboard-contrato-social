@@ -121,10 +121,7 @@ class ChatScreen extends StatelessWidget {
     String formattedDate = DateFormat(
       'dd/MM/yyyy HH:mm',
     ).format(chat.createdAt.toLocal());
-    String displayUuid = chat.ticketUuid.substring(
-      0,
-      8,
-    );
+    String displayUuid = chat.ticketUuid.substring(0, 8);
 
     return Card(
       elevation: 3,

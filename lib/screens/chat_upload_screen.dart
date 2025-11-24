@@ -106,15 +106,30 @@ class _ChatUploadScreenState extends State<ChatUploadScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              // Título
-              Text(
-                'Upload de PDF para Análise com IA',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: primaryColor,
-                ),
-                textAlign: TextAlign.center,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Seta para Voltar
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.black87),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                  // Título
+                  Expanded(
+                    child: Text(
+                      'Upload de PDF para Análise com IA',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: primaryColor,
+                      ),
+                      textAlign: TextAlign.left, // Alinhado à esquerda
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 30),
 
