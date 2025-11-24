@@ -53,3 +53,4 @@ app.*.map.json
 
 /linux/flutter/generated_plugin_registrant.cc
 /macos/flutter/generated_plugin_registrant.*
+pubspec.lock
