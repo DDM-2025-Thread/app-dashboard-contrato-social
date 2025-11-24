@@ -1,30 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
-// Importa os serviços e modelos necessários
 import '../models/chat_model.dart';
 import '../services/chat_service.dart';
-
-// Importa as telas de destino
-import 'chat_visualize_screen.dart'; // Tela de visualização (detalhes)
-import 'chat_upload_screen.dart'; // Tela de upload (botão FAB)
+import 'chat_visualize_screen.dart';
+import 'chat_upload_screen.dart';
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({super.key});
 
   final Color primaryColor = Colors.indigo;
 
+  Widget _buildCustomHeader(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          const Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(left: 8.0),
+              child: Text(
+                'Meus Chats',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Meus Chats'),
-        backgroundColor: primaryColor,
-        foregroundColor: Colors.white,
-        elevation: 4,
-      ),
-
-      // Floating Action Button para ir para a tela de Upload
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.of(context).push(
@@ -39,57 +57,61 @@ class ChatScreen extends StatelessWidget {
       ),
 
       body: FutureBuilder<List<ChatModel>>(
-        // Chama o método para buscar todos os chats do usuário
         future: ChatService.findByUser(),
         builder: (context, snapshot) {
+          final List<Widget> children = [];
+
+          children.add(_buildCustomHeader(context));
+
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                'Erro ao carregar o histórico: ${snapshot.error}',
-                style: const TextStyle(color: Colors.red),
-              ),
-            );
-          }
-
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(
-              child: Padding(
-                padding: EdgeInsets.all(32.0),
-                child: Text(
-                  'Você ainda não possui nenhum chat. Clique no botão "Novo Upload" para começar.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+            children.add(const Center(child: CircularProgressIndicator()));
+          } else if (snapshot.hasError) {
+            children.add(
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(32.0),
+                  child: Text(
+                    'Erro ao carregar o histórico: ${snapshot.error}',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.red),
+                  ),
                 ),
               ),
             );
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            children.add(
+              const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(32.0),
+                  child: Text(
+                    'Você ainda não possui nenhum chat. Clique no botão "Novo Upload" para começar.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
+                ),
+              ),
+            );
+          } else {
+            final List<ChatModel> chats = snapshot.data!;
+            children.addAll(
+              chats.map((chat) => _buildChatListItem(context, chat)).toList(),
+            );
           }
 
-          // Constrói a lista de cards
-          final List<ChatModel> chats = snapshot.data!;
-          return ListView.builder(
+          return ListView(
             padding: const EdgeInsets.all(16.0),
-            itemCount: chats.length,
-            itemBuilder: (context, index) {
-              final chat = chats[index];
-              return _buildChatListItem(context, chat);
-            },
+            children: children,
           );
         },
       ),
     );
   }
 
-  // Constrói o widget de Card para cada item da lista
   Widget _buildChatListItem(BuildContext context, ChatModel chat) {
     final bool isError =
         chat.errorMessage != null && chat.errorMessage!.isNotEmpty;
     final bool isCompleted = chat.status == 'Completed';
 
-    // Define estilos visuais baseados no status
     Color statusColor = isError
         ? Colors.red.shade700
         : (isCompleted ? Colors.green.shade700 : Colors.orange.shade700);
@@ -102,7 +124,7 @@ class ChatScreen extends StatelessWidget {
     String displayUuid = chat.ticketUuid.substring(
       0,
       8,
-    ); // Exibe apenas os primeiros 8 caracteres
+    );
 
     return Card(
       elevation: 3,
@@ -112,10 +134,8 @@ class ChatScreen extends StatelessWidget {
         side: BorderSide(color: statusColor.withOpacity(0.4), width: 1),
       ),
 
-      // Envolve o Card com InkWell para permitir o clique
       child: InkWell(
         onTap: () {
-          // Navega para a tela de visualização, passando o UUID do ticket
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) =>
@@ -129,11 +149,9 @@ class ChatScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Linha do Status e Data
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Status com Ícone
                   Row(
                     children: [
                       Icon(statusIcon, color: statusColor, size: 20),
@@ -149,7 +167,6 @@ class ChatScreen extends StatelessWidget {
                     ],
                   ),
 
-                  // Data de Criação
                   Row(
                     children: [
                       Icon(
@@ -172,7 +189,6 @@ class ChatScreen extends StatelessWidget {
 
               const Divider(height: 15),
 
-              // UUID do Ticket (destacado)
               Text(
                 'Ticket:',
                 style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
@@ -187,7 +203,6 @@ class ChatScreen extends StatelessWidget {
                 ),
               ),
 
-              // Se houver erro, exibe um pequeno aviso
               if (isError)
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
