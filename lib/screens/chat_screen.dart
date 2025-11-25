@@ -119,9 +119,12 @@ class ChatScreen extends StatelessWidget {
         ? Icons.cancel
         : (isCompleted ? Icons.check_circle : Icons.pending_actions);
     String formattedDate = DateFormat(
-      'dd/MM/yyyy HH:mm',
+      'dd/MM/yyyy - HH:mm',
     ).format(chat.createdAt.toLocal());
-    String displayUuid = chat.ticketUuid.substring(0, 8);
+    String displayUuid = chat.ticketUuid;
+    String displayName = chat.name.length > 36
+        ? '${chat.name.substring(0, 36)}...'
+        : chat.name;
 
     return Card(
       elevation: 3,
@@ -187,16 +190,31 @@ class ChatScreen extends StatelessWidget {
               const Divider(height: 15),
 
               Text(
+                'Nome do Arquivo:',
+                style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                displayName,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black54,
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              Text(
                 'Ticket:',
                 style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
               ),
               const SizedBox(height: 4),
               Text(
-                '#$displayUuid...',
+                displayUuid,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
-                  color: primaryColor,
+                  color: Colors.black54,
                 ),
               ),
 
