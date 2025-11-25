@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
-import '../services/chat_service.dart';
+import '../../services/chat_service.dart';
 
 class ChatUploadScreen extends StatefulWidget {
   const ChatUploadScreen({super.key});
