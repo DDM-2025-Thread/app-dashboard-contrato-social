@@ -150,8 +150,15 @@ class ChatVisualizeScreen extends StatelessWidget {
             const Divider(height: 20),
 
             _buildInfoRow(
+              icon: Icons.description,
+              label: 'Nome:',
+              content: chat.name,
+            ),
+            const SizedBox(height: 15),
+
+            _buildInfoRow(
               icon: Icons.vpn_key,
-              label: 'UUID do Ticket:',
+              label: 'Código do Ticket:',
               content: chat.ticketUuid,
             ),
             const SizedBox(height: 15),
