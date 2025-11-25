@@ -1,5 +1,5 @@
 import 'package:dashboard_application/screens/api_key_screen.dart';
-import 'package:dashboard_application/screens/chat_screen.dart';
+import 'package:dashboard_application/screens/chat/chat_screen.dart';
 import 'package:dashboard_application/screens/dashboard_screen.dart';
 import 'package:dashboard_application/screens/user_screen.dart';
 import 'package:dashboard_application/widgets/bottom_nav_bar.dart';

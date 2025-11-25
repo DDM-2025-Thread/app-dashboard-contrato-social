@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../services/chat_service.dart';
-import '../models/chat_model.dart';
+import '../../services/chat_service.dart';
+import '../../models/chat_model.dart';
 
 class ChatVisualizeScreen extends StatelessWidget {
   final String ticketUuid;

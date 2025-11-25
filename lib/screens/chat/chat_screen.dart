@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../models/chat_model.dart';
-import '../services/chat_service.dart';
+import '../../models/chat_model.dart';
+import '../../services/chat_service.dart';
 import 'chat_visualize_screen.dart';
 import 'chat_upload_screen.dart';
 
