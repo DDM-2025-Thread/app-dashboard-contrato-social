@@ -16,12 +16,6 @@ class ChatScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
           const Expanded(
             child: Padding(
               padding: EdgeInsets.only(left: 8.0),
