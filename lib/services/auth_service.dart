@@ -95,8 +95,17 @@ class AuthService extends ApiService {
         final data = json.decode(response.body);
 
         final token = data['token'];
-        _currentUser = UserModel.fromJson(data['user']);
         await _saveToken(token);
+
+        if (data['user'] != null) {
+          _currentUser = UserModel.fromJson(data['user']);
+        } else {
+          _currentUser = UserModel(
+            name: data['name'],
+            email: email,
+            role: data['role'],
+          );
+        }
 
         return AuthResponse(
           success: true,
