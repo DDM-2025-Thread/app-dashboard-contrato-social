@@ -17,10 +17,77 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _ticketController = TextEditingController();
   bool _isSearching = false;
 
+  late Future<List<ChatModel>> _chatsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _chatsFuture = ChatService.findByUser();
+  }
+
+  void _reloadChats() {
+    setState(() {
+      _chatsFuture = ChatService.findByUser();
+    });
+  }
+
   @override
   void dispose() {
     _ticketController.dispose();
     super.dispose();
+  }
+
+  void _confirmAndDelete(ChatModel chat) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Confirmar Exclusão"),
+          content: Text(
+            "Tem certeza que deseja apagar o chat '${chat.name}' (Ticket: ${chat.ticketUuid.substring(0, 8)}...)? Esta ação é irreversível.",
+          ),
+          actions: [
+            TextButton(
+              child: const Text("Cancelar"),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            TextButton(
+              child: const Text("Excluir", style: TextStyle(color: Colors.red)),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _deleteChat(chat.ticketUuid, chat.name);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _deleteChat(String ticketUuid, String chatName) async {
+    try {
+      await ChatService.delete(ticketUuid);
+
+      _reloadChats();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Chat "$chatName" excluído com sucesso!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Falha ao excluir o chat: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   void _searchChatByTicket() async {
@@ -151,9 +218,14 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const ChatUploadScreen()),
-          );
+          Navigator.of(context)
+              .push(
+                MaterialPageRoute(
+                  builder: (context) => const ChatUploadScreen(),
+                ),
+              )
+              .then((_) => _reloadChats());
+          ;
         },
         icon: const Icon(Icons.cloud_upload),
         label: const Text('Novo Upload'),
@@ -163,7 +235,7 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
 
       body: FutureBuilder<List<ChatModel>>(
-        future: ChatService.findByUser(),
+        future: _chatsFuture,
         builder: (context, snapshot) {
           final List<Widget> children = [];
 
@@ -200,6 +272,9 @@ class _ChatScreenState extends State<ChatScreen> {
             );
           } else {
             final List<ChatModel> chats = snapshot.data!;
+            chats.sort(
+              (a, b) => b.createdAt.compareTo(a.createdAt),
+            );
             children.addAll(
               chats.map((chat) => _buildChatListItem(context, chat)).toList(),
             );
@@ -241,105 +316,130 @@ class _ChatScreenState extends State<ChatScreen> {
         side: BorderSide(color: statusColor.withOpacity(0.4), width: 1),
       ),
 
-      child: InkWell(
-        onTap: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) =>
-                  ChatVisualizeScreen(ticketUuid: chat.ticketUuid),
-            ),
-          );
-        },
-        borderRadius: BorderRadius.circular(10),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Stack(
+        children: [
+          InkWell(
+            onTap: () {
+              Navigator.of(context)
+                  .push(
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          ChatVisualizeScreen(ticketUuid: chat.ticketUuid),
+                    ),
+                  )
+                  .then((_) => _reloadChats());
+              ;
+            },
+            borderRadius: BorderRadius.circular(10),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Icon(statusIcon, color: statusColor, size: 20),
-                      const SizedBox(width: 8),
-                      Text(
-                        chat.status,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: statusColor,
-                          fontSize: 15,
-                        ),
+                      Row(
+                        children: [
+                          Icon(statusIcon, color: statusColor, size: 20),
+                          const SizedBox(width: 8),
+                          Text(
+                            chat.status,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: statusColor,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.access_time,
+                            color: Colors.grey.shade600,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            formattedDate,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
 
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.access_time,
-                        color: Colors.grey.shade600,
-                        size: 16,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        formattedDate,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey.shade600,
-                        ),
-                      ),
-                    ],
+                  const Divider(height: 15),
+
+                  Text(
+                    'Nome do Arquivo:',
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
                   ),
-                ],
-              ),
-
-              const Divider(height: 15),
-
-              Text(
-                'Nome do Arquivo:',
-                style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                displayName,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black54,
-                ),
-              ),
-              const SizedBox(height: 12),
-
-              Text(
-                'Ticket:',
-                style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                displayUuid,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black54,
-                ),
-              ),
-
-              if (isError)
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Text(
-                    '❌ Falha no processamento. Clique para ver detalhes.',
+                  const SizedBox(height: 4),
+                  Text(
+                    displayName,
                     style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.red.shade700,
-                      fontStyle: FontStyle.italic,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black54,
                     ),
                   ),
-                ),
-            ],
+                  const SizedBox(height: 12),
+
+                  Text(
+                    'Ticket:',
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    displayUuid,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black54,
+                    ),
+                  ),
+
+                  if (isError)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        '❌ Falha no processamento. Clique para ver detalhes.',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.red.shade700,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ),
-        ),
+          Positioned(
+            top: 120,
+            right: 8,
+            child: Material(
+              color: Colors.transparent,
+              child: IconButton(
+                icon: Icon(
+                  Icons.delete_outline,
+                  color: Colors.red.shade400,
+                  size: 24,
+                ),
+                onPressed: () {
+                  _confirmAndDelete(chat);
+                },
+                tooltip: 'Excluir Chat',
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
