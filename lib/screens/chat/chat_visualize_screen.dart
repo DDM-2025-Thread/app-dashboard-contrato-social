@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/services.dart';
 import '../../services/chat_service.dart';
 import '../../models/chat_model.dart';
 
@@ -96,7 +97,7 @@ class ChatVisualizeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 25),
 
-                _buildInfoCard(chat),
+                _buildInfoCard(context, chat),
                 const SizedBox(height: 25),
 
                 if (chat.errorMessage != null && chat.errorMessage!.isNotEmpty)
@@ -114,8 +115,26 @@ class ChatVisualizeScreen extends StatelessWidget {
     );
   }
 
+  void _copyTicketToClipboard(BuildContext context, String ticket) {
+    Clipboard.setData(ClipboardData(text: ticket)).then((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.check_circle, color: Colors.white),
+              const SizedBox(width: 8),
+              const Text('Ticket copiado com sucesso!'),
+            ],
+          ),
+          backgroundColor: primaryColor,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    });
+  }
+
   // Card principal
-  Widget _buildInfoCard(ChatModel chat) {
+  Widget _buildInfoCard(BuildContext context, ChatModel chat) {
     final bool isError =
         chat.errorMessage != null && chat.errorMessage!.isNotEmpty;
     final bool isCompleted = chat.status == 'Completed';
@@ -160,6 +179,12 @@ class ChatVisualizeScreen extends StatelessWidget {
               icon: Icons.vpn_key,
               label: 'Código do Ticket:',
               content: chat.ticketUuid,
+              trailing: IconButton(
+                icon: const Icon(Icons.copy, color: Colors.indigo, size: 20),
+                onPressed: () =>
+                    _copyTicketToClipboard(context, chat.ticketUuid),
+                tooltip: 'Copiar Código do Ticket',
+              ),
             ),
             const SizedBox(height: 15),
 
@@ -188,6 +213,7 @@ class ChatVisualizeScreen extends StatelessWidget {
     required String label,
     required String content,
     Color? contentColor,
+    Widget? trailing,
   }) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -217,6 +243,7 @@ class ChatVisualizeScreen extends StatelessWidget {
             ],
           ),
         ),
+        if (trailing != null) trailing,
       ],
     );
   }
