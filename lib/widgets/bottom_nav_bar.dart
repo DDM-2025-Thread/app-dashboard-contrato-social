@@ -3,32 +3,42 @@ import 'package:flutter/material.dart';
 class BottomNavBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
+  final List<BottomNavigationBarItem> items;
 
   const BottomNavBar({
-    Key? key,
+    super.key,
     required this.currentIndex,
     required this.onTap,
-  }) : super(key: key);
+    required this.items,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      currentIndex: currentIndex,
-      onTap: onTap,
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.dashboard),
-          label: 'Dashboard',
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(
+            color: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+            width: 1,
+          ),
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.key),
-          label: 'API Keys',
+      ),
+      child: BottomNavigationBar(
+        currentIndex: currentIndex,
+        onTap: onTap,
+        items: items,
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: isDark ? Colors.black : Colors.white,
+        selectedItemColor: Colors.purple.shade400,
+        unselectedItemColor: isDark ? Colors.grey[400] : Colors.grey[600],
+        selectedLabelStyle: const TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'User',
-        ),
-      ],
+        unselectedLabelStyle: const TextStyle(fontSize: 12),
+      ),
     );
   }
 }

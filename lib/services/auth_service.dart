@@ -50,7 +50,11 @@ class AuthService extends ApiService {
         if (data['user'] != null) {
           _currentUser = UserModel.fromJson(data['user']);
         } else {
-          _currentUser = UserModel(name: data['name'], email: email);
+          _currentUser = UserModel(
+            name: data['name'],
+            email: email,
+            role: data['role'],
+          );
         }
 
         return AuthResponse(

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class ApiKeyScreen extends StatefulWidget {
-  const ApiKeyScreen({Key? key}) : super(key: key);
+  const ApiKeyScreen({super.key});
 
   @override
   State<ApiKeyScreen> createState() => _ApiKeyScreenState();
