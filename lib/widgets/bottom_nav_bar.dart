@@ -3,79 +3,41 @@ import 'package:flutter/material.dart';
 class BottomNavBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
+  final List<BottomNavigationBarItem> items;
 
   const BottomNavBar({
-    Key? key,
+    super.key,
     required this.currentIndex,
     required this.onTap,
-  }) : super(key: key);
-
-  static const List<Map<String, dynamic>> _items = [
-    {'icon': Icons.dashboard, 'label': 'Dashboard'},
-    {'icon': Icons.key, 'label': 'API Keys'},
-    {'icon': Icons.person, 'label': 'User'},
-    {'icon': Icons.receipt_long, 'label': 'Chats'},
-  ];
+    required this.items,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
-      height: 60,
       decoration: BoxDecoration(
-        color: Theme.of(context).canvasColor,
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 4,
-            offset: Offset(0, -2),
+        border: Border(
+          top: BorderSide(
+            color: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+            width: 1,
           ),
-        ],
+        ),
       ),
-
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: List.generate(_items.length, (index) {
-          final item = _items[index];
-          final isSelected = index == currentIndex;
-
-          return Expanded(
-            child: InkWell(
-              onTap: () => onTap(index),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 4.0,
-                  vertical: 8.0,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      item['icon'] as IconData,
-                      color: isSelected
-                          ? Theme.of(context).primaryColor
-                          : Colors.grey.shade600,
-                      size: 24,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      item['label'] as String,
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: isSelected
-                            ? Theme.of(context).primaryColor
-                            : Colors.grey.shade600,
-                        fontWeight: isSelected
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        }),
+      child: BottomNavigationBar(
+        currentIndex: currentIndex,
+        onTap: onTap,
+        items: items,
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: isDark ? Colors.black : Colors.white,
+        selectedItemColor: Colors.purple.shade400,
+        unselectedItemColor: isDark ? Colors.grey[400] : Colors.grey[600],
+        selectedLabelStyle: const TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+        ),
+        unselectedLabelStyle: const TextStyle(fontSize: 12),
       ),
     );
   }
