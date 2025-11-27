@@ -36,10 +36,13 @@ class _AdminScreenState extends State<AdminScreen> {
       final results = await Future.wait([
         AdminService.fetchAllUsers(),
         AdminService.fetchDashboardStats(),
+        AdminService.getCurrentApiCost(),
       ]);
 
       final usersList = results[0] as List<UserModel>;
       final stats = results[1] as Map<String, dynamic>;
+
+      _currentCost = results[2] as double;
 
       setState(() {
         _totalUsers = stats['total_users'] ?? usersList.length;
@@ -103,7 +106,6 @@ class _AdminScreenState extends State<AdminScreen> {
     );
   }
 
-  // --- Widget: Cards de Métricas ---
   Widget _buildMetricsSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -236,8 +238,8 @@ class _AdminScreenState extends State<AdminScreen> {
                         RegExp(r'^\d+\.?\d{0,4}'),
                       ),
                     ],
-                    decoration: const InputDecoration(
-                      hintText: '0.01',
+                    decoration: InputDecoration(
+                      hintText: _currentCost.toStringAsFixed(2),
                       border: OutlineInputBorder(),
                       prefixText: 'R\$ ',
                       isDense: true,

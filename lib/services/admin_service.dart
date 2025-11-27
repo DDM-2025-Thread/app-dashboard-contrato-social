@@ -20,6 +20,34 @@ class AdminService extends ApiService {
     }
   }
 
+  static Future<double> getCurrentApiCost() async {
+    try {
+      final response = await ApiService.handleRequest(
+        http.get(
+          Uri.parse('${ApiService.baseUrl}/billing/admin/config'),
+          headers: ApiService.authenticatedHeaders,
+        ),
+        (data) => data as Map<String, dynamic>,
+      );
+
+      final costValue = response['cost_per_request'];
+
+      if (costValue == null) {
+        return 0.0;
+      }
+
+      if (costValue is String) {
+        return double.tryParse(costValue) ?? 0.0;
+      } else if (costValue is num) {
+        return costValue.toDouble();
+      }
+
+      return 0.0;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   static Future<void> updateApiCost(double newCost) async {
     try {
       await ApiService.handleRequest(
