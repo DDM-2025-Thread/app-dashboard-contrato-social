@@ -78,4 +78,14 @@ class ChatService extends ApiService {
       }
     }
   }
+
+  static Future<void> delete(String ticketUuid) async {
+    return ApiService.handleRequest<void>(
+      http.delete(
+        Uri.parse('${ApiService.baseUrl}$endpoint/delete/$ticketUuid'),
+        headers: ApiService.authenticatedHeaders,
+      ),
+      (data) => null,
+    );
+  }
 }
