@@ -272,9 +272,7 @@ class _ChatScreenState extends State<ChatScreen> {
             );
           } else {
             final List<ChatModel> chats = snapshot.data!;
-            chats.sort(
-              (a, b) => b.createdAt.compareTo(a.createdAt),
-            );
+            chats.sort((a, b) => b.createdAt.compareTo(a.createdAt));
             children.addAll(
               chats.map((chat) => _buildChatListItem(context, chat)).toList(),
             );
