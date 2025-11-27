@@ -5,10 +5,122 @@ import '../../services/chat_service.dart';
 import 'chat_visualize_screen.dart';
 import 'chat_upload_screen.dart';
 
-class ChatScreen extends StatelessWidget {
+class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
 
+  @override
+  State<ChatScreen> createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends State<ChatScreen> {
   final Color primaryColor = Colors.indigo;
+  final TextEditingController _ticketController = TextEditingController();
+  bool _isSearching = false;
+
+  @override
+  void dispose() {
+    _ticketController.dispose();
+    super.dispose();
+  }
+
+  void _searchChatByTicket() async {
+    final ticket = _ticketController.text.trim();
+    if (ticket.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Por favor, insira o Ticket UUID completo.'),
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _isSearching = true;
+    });
+
+    try {
+      final ChatModel chat = await ChatService.getResponse(ticket);
+
+      if (mounted) {
+        setState(() {
+          _isSearching = false;
+        });
+
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) =>
+                ChatVisualizeScreen(ticketUuid: chat.ticketUuid),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isSearching = false;
+        });
+
+        String message = 'Ticket "$ticket" não encontrado ou inacessível.';
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message), backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
+
+  // Campo de busca de ticket
+  Widget _buildTicketSearch() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _ticketController,
+              decoration: InputDecoration(
+                hintText: 'Buscar chat pelo Ticket',
+                prefixIcon: Icon(
+                  Icons.confirmation_number_outlined,
+                  color: primaryColor,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                filled: true,
+                fillColor: Colors.grey.shade100,
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 10.0,
+                  horizontal: 10.0,
+                ),
+              ),
+              onSubmitted: (_) => _searchChatByTicket(),
+            ),
+          ),
+          const SizedBox(width: 8),
+          _isSearching
+              ? const SizedBox(
+                  width: 48,
+                  height: 48,
+                  child: Center(
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                )
+              : IconButton(
+                  onPressed: _searchChatByTicket,
+                  icon: Icon(Icons.search, color: primaryColor, size: 28),
+                  style: IconButton.styleFrom(
+                    backgroundColor: primaryColor.withOpacity(0.1),
+                    padding: const EdgeInsets.all(12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildCustomHeader(BuildContext context) {
     return Padding(
@@ -56,6 +168,7 @@ class ChatScreen extends StatelessWidget {
           final List<Widget> children = [];
 
           children.add(_buildCustomHeader(context));
+          children.add(_buildTicketSearch());
 
           if (snapshot.connectionState == ConnectionState.waiting) {
             children.add(const Center(child: CircularProgressIndicator()));
