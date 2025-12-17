@@ -138,7 +138,7 @@ class _ChatScreenState extends State<ChatScreen> {
   // Campo de busca de ticket
   Widget _buildTicketSearch() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         children: [
           Expanded(
@@ -272,9 +272,7 @@ class _ChatScreenState extends State<ChatScreen> {
             );
           } else {
             final List<ChatModel> chats = snapshot.data!;
-            chats.sort(
-              (a, b) => b.createdAt.compareTo(a.createdAt),
-            );
+            chats.sort((a, b) => b.createdAt.compareTo(a.createdAt));
             children.addAll(
               chats.map((chat) => _buildChatListItem(context, chat)).toList(),
             );
